@@ -1,0 +1,42 @@
+# Ignore Python compiled files
+*.pyc
+__pycache__/
+
+# Ignore VSCode settings
+.vscode/
+
+# Ignore macOS system files
+.DS_Store
+
+# Ignore Dart tool files
+.dart_tool/
+
+# Ignore Flutter and Dart related files
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+.pub-cache
+.pub
+
+# Ignore build files
+build/
+ios/Flutter/App.xcodeproj/project.xcworkspace/xcuserdata
+ios/Flutter/App.xcodeproj/xcuserdata
+ios/Flutter/Flutter.podspec
+ios/Flutter/Flutter.framework
+
+# Ignore Android related files
+android/.gradle/
+android/.idea/
+android/captures/
+android/app/build/
+android/local.properties
+android/gradle.properties
+android/gradlew
+android/gradlew.bat
+android/settings.gradle
+android/gradle/
+android/app/
+
+# Ignore Flutter export environment
+ios/Flutter/flutter_export_environment.sh
