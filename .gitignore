@@ -41,4 +41,4 @@ android/app/
 # Ignore Flutter export environment
 ios/Flutter/flutter_export_environment.sh
 
-new_project_env/
+venv/
