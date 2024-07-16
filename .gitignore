@@ -38,12 +38,6 @@ android/settings.gradle
 android/gradle/
 android/app/
 
-# Ignore platform-specific files not needed for iOS
-/linux/
-/macos/
-/windows/
-/web/
-
 # Ignore Flutter export environment
 ios/Flutter/flutter_export_environment.sh
 
