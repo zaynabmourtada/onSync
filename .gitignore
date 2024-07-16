@@ -41,4 +41,11 @@ android/app/
 # Ignore Flutter export environment
 ios/Flutter/flutter_export_environment.sh
 
+# Ignore platform-specific files not needed for iOS
+linux/
+macos/
+windows/
+web/
+
+# Ignore virtual environment files
 venv/
