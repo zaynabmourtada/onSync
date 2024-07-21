@@ -13,7 +13,12 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        primaryColor: const Color(0xFFC19A6B), // Setting the primary color to brown
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: const Color(0xFFC19A6B), // Setting the seed color to brown
+          primary: const Color(0xFFC19A6B), // Ensuring the primary color is brown
+          secondary: const Color(0xFF01204E), // Setting secondary color to dark blue
+        ),
         useMaterial3: true,
       ),
       initialRoute: '/registration', // Set the initial route to the RegistrationPage
@@ -47,7 +52,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        backgroundColor: Theme.of(context).colorScheme.primary, // Setting AppBar background to brown
         title: Text(widget.title),
       ),
       body: Center(
@@ -65,6 +70,7 @@ class _MyHomePageState extends State<MyHomePage> {
       floatingActionButton: FloatingActionButton(
         onPressed: _incrementCounter,
         tooltip: 'Increment',
+        backgroundColor: Theme.of(context).colorScheme.primary, // Setting FloatingActionButton color to brown
         child: const Icon(Icons.add),
       ),
     );
