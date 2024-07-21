@@ -86,7 +86,8 @@ class RegistrationPage extends StatelessWidget {
       ),
       child: Text(
         text,
-        style: const TextStyle(fontSize: 16, color: Colors.white), // Set text color to white
+        style: const TextStyle(
+            fontSize: 16, color: Colors.white), // Set text color to white
       ),
     );
   }
