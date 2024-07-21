@@ -25,8 +25,7 @@ SECRET_KEY = 'django-insecure-h3*bqsmeldf_c!bm#fl48)@*hz$5!cke7ws+x935bsu)ioxij#
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
-
+ALLOWED_HOSTS = ['localhost', '127.0.0.1']
 
 # Application definition
 
@@ -38,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'main',
+    'django_extensions',  # Add this line if you are using runserver_plus
 ]
 
 MIDDLEWARE = [
@@ -115,10 +115,24 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
-
+#Setting.py
 STATIC_URL = 'static/'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Security settings for development with HTTPS
+SECURE_SSL_REDIRECT = False
+SECURE_HSTS_SECONDS = 0
+SECURE_HSTS_INCLUDE_SUBDOMAINS = False
+SECURE_HSTS_PRELOAD = False
+SECURE_CONTENT_TYPE_NOSNIFF = False
+SECURE_BROWSER_XSS_FILTER = False
+SESSION_COOKIE_SECURE = False
+CSRF_COOKIE_SECURE = False
+
+# Paths to your SSL certificate and key
+SSL_CERTIFICATE_PATH = r'C:\Users\nizar\Documents\Onsync\onSync\onsync_backend\server-cert.pem'
+SSL_KEY_PATH = r'C:\Users\nizar\Documents\Onsync\onSync\onsync_backend\server-key.pem'

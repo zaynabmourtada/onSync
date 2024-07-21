@@ -1,3 +1,4 @@
+#Urls.py
 """
 URL configuration for onsync_backend project.
 
@@ -16,7 +17,9 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from main.views import control_coffee_machine  # Import the view
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('control_coffee_machine/', control_coffee_machine, name='control_coffee_machine'), 
 ]
