@@ -1,0 +1,24 @@
+[ req ]
+default_bits       = 2048
+distinguished_name = req_distinguished_name
+req_extensions     = req_ext
+x509_extensions    = v3_ca
+prompt             = no
+
+[ req_distinguished_name ]
+C  = US
+ST = Michigan
+L  = Ann Arbor
+O  = Example Org
+OU = Example Unit
+CN = 127.0.0.1
+
+[ req_ext ]
+subjectAltName = @alt_names
+
+[ v3_ca ]
+subjectAltName = @alt_names
+basicConstraints = critical, CA:true
+
+[ alt_names ]
+IP.1 = 127.0.0.1
