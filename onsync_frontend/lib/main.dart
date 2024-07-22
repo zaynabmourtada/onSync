@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'registration.dart'; // Import the registration.dart file
+import 'api_service.dart'; // Import the api_service.dart file
 
 void main() {
   runApp(const MyApp());
@@ -44,11 +45,29 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  final ApiService apiService = ApiService('http://192.168.1.100:5000');
   int _counter = 0;
+  String _status = "OFF";
 
   void _incrementCounter() {
     setState(() {
       _counter++;
+    });
+  }
+
+  Future<void> _setSchedule() async {
+    await apiService.setSchedule('2024-07-21T08:00:00', '2024-07-21T08:15:00');
+  }
+
+  Future<void> _sendCommand(String command) async {
+    await apiService.controlCoffeeMachine(command);
+    _getStatus(); // Update status after sending command
+  }
+
+  Future<void> _getStatus() async {
+    final status = await apiService.getStatus();
+    setState(() {
+      _status = status['status'];
     });
   }
 
@@ -70,6 +89,27 @@ class _MyHomePageState extends State<MyHomePage> {
               '$_counter',
               style: Theme.of(context).textTheme.headlineMedium,
             ),
+            const SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: _setSchedule,
+              child: Text('Set Schedule'),
+            ),
+            const SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () => _sendCommand('ON'),
+              child: Text('Turn ON'),
+            ),
+            ElevatedButton(
+              onPressed: () => _sendCommand('OFF'),
+              child: Text('Turn OFF'),
+            ),
+            const SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: _getStatus,
+              child: Text('Get Status'),
+            ),
+            const SizedBox(height: 20),
+            Text('Current Status: $_status'),
           ],
         ),
       ),
