@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'registration.dart'; // Import the registration.dart file
+import 'dashboard.dart'; 
 
 void main() {
   runApp(const MyApp());

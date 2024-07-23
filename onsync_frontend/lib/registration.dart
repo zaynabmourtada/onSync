@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dashboard.dart';
 
 class RegistrationPage extends StatelessWidget {
   const RegistrationPage({super.key});
@@ -38,7 +39,7 @@ class RegistrationPage extends StatelessWidget {
               const SizedBox(height: 16),
               _buildTextField('Re-enter new password'),
               const SizedBox(height: 24),
-              _buildButton('Create Account', const Color(0xFFC19A6B)),
+              _buildButton('Create Account', const Color(0xFFC19A6B), context),
               const SizedBox(height: 16),
               const Text(
                 'Already have an account?',
@@ -48,7 +49,7 @@ class RegistrationPage extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 8),
-              _buildButton('Login', const Color(0xFFC19A6B)),
+              _buildButton('Login', const Color(0xFFC19A6B), context),
             ],
           ),
         ),
@@ -74,9 +75,20 @@ class RegistrationPage extends StatelessWidget {
   }
 
   // Helper method to build buttons
-  Widget _buildButton(String text, Color color) {
+  Widget _buildButton(String text, Color color, BuildContext context) {
     return ElevatedButton(
-      onPressed: () {},
+      onPressed: () {
+      if (text == 'Create Account'){
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) =>  Dashboard()),
+          );
+      }
+  },
+  /* Connect login button to login screen 
+  ..
+  */
+
       style: ElevatedButton.styleFrom(
         backgroundColor: color,
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
