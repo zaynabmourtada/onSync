@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'registration.dart'; // Import the registration.dart file
-<<<<<<< HEAD
 import 'dashboard.dart'; 
-=======
 import 'api_service.dart'; // Import the api_service.dart file
->>>>>>> 0b643b4122dc6c77deada0ec4ca67619e3d83eb8
+import 'Login.dart';
 
 void main() {
   runApp(const MyApp());
@@ -18,20 +16,17 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
-        primaryColor:
-            const Color(0xFFC19A6B), // Setting the primary color to brown
+        primaryColor: const Color(0xFFC19A6B), // Setting the primary color to brown
         colorScheme: ColorScheme.fromSeed(
           seedColor: const Color(0xFFC19A6B), // Setting the seed color to brown
-          primary:
-              const Color(0xFFC19A6B), // Ensuring the primary color is brown
-          secondary:
-              const Color(0xFF01204E), // Setting secondary color to dark blue
+          primary: const Color(0xFFC19A6B), // Ensuring the primary color is brown
+          secondary: const Color(0xFF01204E), // Setting secondary color to dark blue
         ),
         useMaterial3: true,
       ),
-      initialRoute:
-          '/registration', // Set the initial route to the RegistrationPage
+      initialRoute: '/registration', // Set the initial route to the RegistrationPage
       routes: {
+        '/login': (context) =>  LoginScreen(), // Define the route for LoginPage
         '/': (context) => const MyHomePage(title: 'Flutter Demo Home Page'),
         '/registration': (context) => const RegistrationPage(),
       },
@@ -79,9 +74,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Theme.of(context)
-            .colorScheme
-            .primary, // Setting AppBar background to brown
+        backgroundColor: Theme.of(context).colorScheme.primary, // Setting AppBar background to brown
         title: Text(widget.title),
       ),
       body: Center(
@@ -120,9 +113,7 @@ class _MyHomePageState extends State<MyHomePage> {
       floatingActionButton: FloatingActionButton(
         onPressed: _incrementCounter,
         tooltip: 'Increment',
-        backgroundColor: Theme.of(context)
-            .colorScheme
-            .primary, // Setting FloatingActionButton color to brown
+        backgroundColor: Theme.of(context).colorScheme.primary, // Setting FloatingActionButton color to brown
         child: const Icon(Icons.add),
       ),
     );
