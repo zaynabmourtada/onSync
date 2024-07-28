@@ -3,6 +3,8 @@ import 'registration.dart'; // Import the registration.dart file
 import 'dashboard.dart'; 
 import 'api_service.dart'; // Import the api_service.dart file
 import 'Login.dart';
+import 'CoffeeMachineScreen.dart';
+
 
 void main() {
   runApp(const MyApp());
@@ -14,7 +16,6 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
       theme: ThemeData(
         primaryColor: const Color(0xFFC19A6B), // Setting the primary color to brown
         colorScheme: ColorScheme.fromSeed(
@@ -26,9 +27,10 @@ class MyApp extends StatelessWidget {
       ),
       initialRoute: '/registration', // Set the initial route to the RegistrationPage
       routes: {
-        '/login': (context) =>  LoginScreen(), // Define the route for LoginPage
+        '/Login': (context) =>  LoginScreen(), // Define the route for LoginPage
         '/': (context) => const MyHomePage(title: 'Flutter Demo Home Page'),
         '/registration': (context) => const RegistrationPage(),
+        '/CoffeeMachineScreen': (context) => const CoffeeMachineScreen(), 
       },
     );
   }
