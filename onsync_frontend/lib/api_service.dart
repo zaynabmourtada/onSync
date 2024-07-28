@@ -6,7 +6,37 @@ class ApiService {
 
   ApiService(this.baseUrl);
 
-  Future<void> setSchedule(String startTime, String endTime) async {
+  Future<http.Response> register(
+      String email, String username, String password) async {
+    final url = Uri.parse('$baseUrl/register');
+    final response = await http.post(
+      url,
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({
+        'email': email,
+        'username': username,
+        'password': password,
+      }),
+    );
+
+    return response;
+  }
+
+  Future<http.Response> login(String username, String password) async {
+    final url = Uri.parse('$baseUrl/login');
+    final response = await http.post(
+      url,
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({
+        'username': username,
+        'password': password,
+      }),
+    );
+
+    return response;
+  }
+
+  Future<http.Response> setSchedule(String startTime, String endTime) async {
     final url = Uri.parse('$baseUrl/set_schedule');
     final response = await http.post(
       url,
@@ -17,14 +47,10 @@ class ApiService {
       }),
     );
 
-    if (response.statusCode == 200) {
-      print('Schedule set successfully');
-    } else {
-      print('Failed to set schedule');
-    }
+    return response;
   }
 
-  Future<void> controlCoffeeMachine(String command) async {
+  Future<http.Response> controlCoffeeMachine(String command) async {
     final url = Uri.parse('$baseUrl/control_coffee_machine');
     final response = await http.post(
       url,
@@ -32,11 +58,7 @@ class ApiService {
       body: jsonEncode({'command': command}),
     );
 
-    if (response.statusCode == 200) {
-      print('Command sent successfully');
-    } else {
-      print('Failed to send command');
-    }
+    return response;
   }
 
   Future<Map<String, dynamic>> getStatus() async {
