@@ -4,7 +4,8 @@ import 'dashboard.dart';
 import 'api_service.dart'; // Import the api_service.dart file
 import 'Login.dart';
 import 'CoffeeMachineScreen.dart';
-
+import 'registration.dart';
+import 'Login.dart'; // Import the login.dart file
 
 void main() {
   runApp(const MyApp());
@@ -17,20 +18,23 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       theme: ThemeData(
-        primaryColor: const Color(0xFFC19A6B), // Setting the primary color to brown
+        primaryColor: const Color(0xFFC19A6B),
         colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color(0xFFC19A6B), // Setting the seed color to brown
-          primary: const Color(0xFFC19A6B), // Ensuring the primary color is brown
-          secondary: const Color(0xFF01204E), // Setting secondary color to dark blue
+          seedColor: const Color(0xFFC19A6B),
+          primary: const Color(0xFFC19A6B),
+          secondary: const Color(0xFF01204E),
         ),
         useMaterial3: true,
       ),
-      initialRoute: '/registration', // Set the initial route to the RegistrationPage
+      initialRoute: '/registration',
       routes: {
-        '/Login': (context) =>  LoginScreen(), // Define the route for LoginPage
+
         '/': (context) => const MyHomePage(title: 'Flutter Demo Home Page'),
         '/registration': (context) => const RegistrationPage(),
         '/CoffeeMachineScreen': (context) => const CoffeeMachineScreen(), 
+
+        '/': (context) => const MyHomePage(title: 'Flutter Demo Home Page'),
+        '/registration': (context) => const RegistrationPage(),
       },
     );
   }
@@ -46,9 +50,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  final ApiService apiService = ApiService('http://192.168.1.100:5000');
   int _counter = 0;
-  String _status = "OFF";
 
   void _incrementCounter() {
     setState(() {
@@ -56,27 +58,11 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
-  Future<void> _setSchedule() async {
-    await apiService.setSchedule('2024-07-21T08:00:00', '2024-07-21T08:15:00');
-  }
-
-  Future<void> _sendCommand(String command) async {
-    await apiService.controlCoffeeMachine(command);
-    _getStatus(); // Update status after sending command
-  }
-
-  Future<void> _getStatus() async {
-    final status = await apiService.getStatus();
-    setState(() {
-      _status = status['status'];
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.primary, // Setting AppBar background to brown
+        backgroundColor: Theme.of(context).colorScheme.primary,
         title: Text(widget.title),
       ),
       body: Center(
@@ -90,32 +76,21 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
             const SizedBox(height: 20),
             ElevatedButton(
-              onPressed: _setSchedule,
-              child: Text('Set Schedule'),
+              onPressed: () => Navigator.pushNamed(context, '/registration'),
+              child: Text('Register'),
             ),
             const SizedBox(height: 20),
             ElevatedButton(
-              onPressed: () => _sendCommand('ON'),
-              child: Text('Turn ON'),
+              onPressed: () => Navigator.pushNamed(context, '/login'),
+              child: Text('Login'),
             ),
-            ElevatedButton(
-              onPressed: () => _sendCommand('OFF'),
-              child: Text('Turn OFF'),
-            ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: _getStatus,
-              child: Text('Get Status'),
-            ),
-            const SizedBox(height: 20),
-            Text('Current Status: $_status'),
           ],
         ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: _incrementCounter,
         tooltip: 'Increment',
-        backgroundColor: Theme.of(context).colorScheme.primary, // Setting FloatingActionButton color to brown
+        backgroundColor: Theme.of(context).colorScheme.primary,
         child: const Icon(Icons.add),
       ),
     );

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'api_service.dart';
 
 void main() {
   runApp(const MyApp());
@@ -11,18 +12,35 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return const MaterialApp(
       home: Scaffold(
-        body: LoginScreen(),
+        body: LoginPage(),
       ),
     );
   }
 }
 
-class LoginScreen extends StatelessWidget {
-  const LoginScreen({super.key});
+class LoginPage extends StatefulWidget {
+  const LoginPage({Key? key}) : super(key: key);
+
+  @override
+  _LoginPageState createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
+  final TextEditingController _usernameController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  final ApiService apiService = ApiService('http://192.168.1.100:5000');
+
+  void _login() async {
+    final username = _usernameController.text;
+    final password = _passwordController.text;
+    await apiService.login(username, password);
+    // Handle navigation or other post-login actions
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(title: Text('Login')),
       backgroundColor: const Color(0xFF01204E),
       body: Center(
         child: SingleChildScrollView(
@@ -73,9 +91,10 @@ class LoginScreen extends StatelessWidget {
                         decoration: BoxDecoration(
                           border: Border.all(color: const Color(0xFFC19A6B)),
                         ),
-                        child: const Center(
+                        child: Center(
                           child: TextField(
-                            decoration: InputDecoration(
+                            controller: _usernameController,
+                            decoration: const InputDecoration(
                               border: InputBorder.none,
                               hintText: 'Enter your username',
                               hintStyle: TextStyle(
@@ -95,10 +114,11 @@ class LoginScreen extends StatelessWidget {
                         decoration: BoxDecoration(
                           border: Border.all(color: const Color(0xFFC19A6B)),
                         ),
-                        child: const Center(
+                        child: Center(
                           child: TextField(
+                            controller: _passwordController,
                             obscureText: true,
-                            decoration: InputDecoration(
+                            decoration: const InputDecoration(
                               border: InputBorder.none,
                               hintText: 'Enter your password',
                               hintStyle: TextStyle(
@@ -125,9 +145,7 @@ class LoginScreen extends StatelessWidget {
                     ),
                   ),
                   child: TextButton(
-                    onPressed: () {
-                      // Navigate to Dashboard
-                    },
+                    onPressed: _login,
                     child: const Text(
                       'Login',
                       style: TextStyle(
