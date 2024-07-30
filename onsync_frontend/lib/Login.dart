@@ -1,205 +1,133 @@
 import 'package:flutter/material.dart';
 import 'api_service.dart';
+import 'dashboard.dart'; // Make sure this file contains the Dashboard widget
+import 'registration.dart';
 
-void main() {
-  runApp(const MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
+class LoginScreen extends StatefulWidget {
   @override
-  Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: Scaffold(
-        body: LoginPage(),
-      ),
-    );
-  }
+  _LoginScreenState createState() => _LoginScreenState();
 }
 
-class LoginPage extends StatefulWidget {
-  const LoginPage({Key? key}) : super(key: key);
-
-  @override
-  _LoginPageState createState() => _LoginPageState();
-}
-
-class _LoginPageState extends State<LoginPage> {
+class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  final ApiService apiService = ApiService('http://192.168.1.100:5000');
+  final ApiService apiService =
+      ApiService('http://192.168.1.100:5000'); // Update with your backend URL
 
-  void _login() async {
+  void _login(BuildContext context) async {
     final username = _usernameController.text;
     final password = _passwordController.text;
-    await apiService.login(username, password);
-    // Handle navigation or other post-login actions
+
+    final response = await apiService.login(username, password);
+    if (response.statusCode == 200) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) =>
+                Dashboard()), // Ensure Dashboard is defined and imported
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to login: ${response.body}')),
+      );
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Login')),
       backgroundColor: const Color(0xFF01204E),
       body: Center(
-        child: SingleChildScrollView(
-          child: Container(
-            width: 430,
-            height: 932,
-            decoration: const BoxDecoration(
-              color: Color(0xFF01204E),
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(35),
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Text(
+                'Login',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
-            ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const SizedBox(height: 179),
-                const Text(
-                  'Login',
-                  style: TextStyle(
-                    fontFamily: 'Roboto',
-                    fontSize: 40,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                    letterSpacing: 0.025,
-                  ),
-                  textAlign: TextAlign.center,
+              const SizedBox(height: 8),
+              const Text(
+                'Sign in to your account',
+                style: TextStyle(
+                  color: Colors.white70,
+                  fontSize: 16,
                 ),
-                const SizedBox(height: 20),
-                const Text(
-                  'Sign in to your account',
-                  style: TextStyle(
-                    fontFamily: 'Roboto',
-                    fontSize: 24,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.white,
-                    letterSpacing: 0.025,
-                  ),
-                  textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 24),
+              _buildTextField('Enter your username', _usernameController),
+              const SizedBox(height: 16),
+              _buildTextField('Enter your password', _passwordController,
+                  obscureText: true),
+              const SizedBox(height: 24),
+              _buildButton('Login', const Color(0xFFC19A6B), () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => Dashboard()));
+              }),
+              const SizedBox(height: 30),
+              const Text(
+                'Don’t have an account?',
+                style: TextStyle(
+                  color: Colors.white70,
+                  fontSize: 14,
                 ),
-                const SizedBox(height: 60),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 37.0),
-                  child: Column(
-                    children: [
-                      Container(
-                        width: 356,
-                        height: 60,
-                        decoration: BoxDecoration(
-                          border: Border.all(color: const Color(0xFFC19A6B)),
-                        ),
-                        child: Center(
-                          child: TextField(
-                            controller: _usernameController,
-                            decoration: const InputDecoration(
-                              border: InputBorder.none,
-                              hintText: 'Enter your username',
-                              hintStyle: TextStyle(
-                                fontFamily: 'Roboto',
-                                fontSize: 16,
-                                fontWeight: FontWeight.w400,
-                                letterSpacing: 0.025,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 20),
-                      Container(
-                        width: 356,
-                        height: 60,
-                        decoration: BoxDecoration(
-                          border: Border.all(color: const Color(0xFFC19A6B)),
-                        ),
-                        child: Center(
-                          child: TextField(
-                            controller: _passwordController,
-                            obscureText: true,
-                            decoration: const InputDecoration(
-                              border: InputBorder.none,
-                              hintText: 'Enter your password',
-                              hintStyle: TextStyle(
-                                fontFamily: 'Roboto',
-                                fontSize: 16,
-                                fontWeight: FontWeight.w400,
-                                letterSpacing: 0.025,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 40),
-                Container(
-                  width: 284,
-                  height: 44,
-                  decoration: const BoxDecoration(
-                    color: Color(0xFFC19A6B),
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(35),
-                    ),
-                  ),
-                  child: TextButton(
-                    onPressed: _login,
-                    child: const Text(
-                      'Login',
-                      style: TextStyle(
-                        fontFamily: 'Roboto',
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                        letterSpacing: 0.025,
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 80),
-                const Text(
-                  'Don’t have an account?',
-                  style: TextStyle(
-                    fontFamily: 'Roboto',
-                    fontSize: 15,
-                    fontWeight: FontWeight.w500,
-                    color: Colors.white,
-                    letterSpacing: 0.025,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: 20),
-                Container(
-                  width: 284,
-                  height: 44,
-                  decoration: const BoxDecoration(
-                    color: Color(0xFFC19A6B),
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(35),
-                    ),
-                  ),
-                  child: TextButton(
-                    onPressed: () {
-                      // Navigate to Create Account
-                    },
-                    child: const Text(
-                      'Create Account',
-                      style: TextStyle(
-                        fontFamily: 'Roboto',
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                        letterSpacing: 0.025,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
+              ),
+              const SizedBox(height: 8),
+              _buildButton('Create Account', const Color(0xFFC19A6B), () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          RegistrationPage()), // Ensure RegistrationPage is defined and imported
+                );
+              }),
+            ],
           ),
         ),
+      ),
+    );
+  }
+
+  // Helper method to build text fields
+  Widget _buildTextField(String hintText, TextEditingController controller,
+      {bool obscureText = false}) {
+    return TextField(
+      controller: controller,
+      obscureText: obscureText,
+      decoration: InputDecoration(
+        hintText: hintText,
+        hintStyle: const TextStyle(color: Colors.white70),
+        filled: true,
+        fillColor: Colors.white24,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8.0),
+          borderSide: BorderSide.none,
+        ),
+      ),
+      style: const TextStyle(color: Colors.white),
+    );
+  }
+
+  // Helper method to build buttons
+  Widget _buildButton(String text, Color color, VoidCallback onPressed) {
+    return ElevatedButton(
+      onPressed: onPressed,
+      style: ElevatedButton.styleFrom(
+        backgroundColor: color,
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(8.0),
+        ),
+      ),
+      child: Text(
+        text,
+        style: const TextStyle(
+            fontSize: 16, color: Colors.white), // Set text color to white
       ),
     );
   }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:onsync_app/Login.dart';
 import 'api_service.dart';
 import 'dashboard.dart';
 
@@ -13,10 +14,8 @@ class _RegistrationPageState extends State<RegistrationPage> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _confirmPasswordController =
-      TextEditingController();
-  final ApiService apiService =
-      ApiService('http://192.168.1.43:5000'); // Update with your backend URL
+  final TextEditingController _confirmPasswordController = TextEditingController();
+  final ApiService apiService = ApiService('http://192.168.1.43:5000'); // Update with your backend URL
 
   void _register() async {
     final email = _emailController.text;
@@ -31,7 +30,18 @@ class _RegistrationPageState extends State<RegistrationPage> {
       return;
     }
 
+    // Temporarily bypass the API call to test navigation
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => Dashboard()),
+    );
+
+    
     final response = await apiService.register(email, username, password);
+
+    // Log the response for debugging
+    print('Response status: ${response.statusCode}');
+    print('Response body: ${response.body}');
 
     if (response.statusCode == 200) {
       Navigator.push(
@@ -43,6 +53,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
         SnackBar(content: Text('Failed to register: ${response.body}')),
       );
     }
+   
   }
 
   @override
@@ -76,15 +87,11 @@ class _RegistrationPageState extends State<RegistrationPage> {
               const SizedBox(height: 16),
               _buildTextField('Enter new username', _usernameController),
               const SizedBox(height: 16),
-              _buildTextField('Enter new password', _passwordController,
-                  obscureText: true),
+              _buildTextField('Enter new password', _passwordController, obscureText: true),
               const SizedBox(height: 16),
-              _buildTextField(
-                  'Re-enter new password', _confirmPasswordController,
-                  obscureText: true),
+              _buildTextField('Re-enter new password', _confirmPasswordController, obscureText: true),
               const SizedBox(height: 24),
-              _buildButton(
-                  'Create Account', const Color(0xFFC19A6B), _register),
+              _buildButton('Create Account', const Color(0xFFC19A6B), _register),
               const SizedBox(height: 16),
               const Text(
                 'Already have an account?',
@@ -95,7 +102,10 @@ class _RegistrationPageState extends State<RegistrationPage> {
               ),
               const SizedBox(height: 8),
               _buildButton('Login', const Color(0xFFC19A6B), () {
-                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => LoginScreen()),
+                );
               }),
             ],
           ),
@@ -105,8 +115,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
   }
 
   // Helper method to build text fields
-  Widget _buildTextField(String hintText, TextEditingController controller,
-      {bool obscureText = false}) {
+  Widget _buildTextField(String hintText, TextEditingController controller, {bool obscureText = false}) {
     return TextField(
       controller: controller,
       obscureText: obscureText,
@@ -137,8 +146,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
       ),
       child: Text(
         text,
-        style: const TextStyle(
-            fontSize: 16, color: Colors.white), // Set text color to white
+        style: const TextStyle(fontSize: 16, color: Colors.white), // Set text color to white
       ),
     );
   }
