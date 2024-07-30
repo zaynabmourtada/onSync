@@ -1,8 +1,9 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:onsync_app/Login.dart';
 import 'Settings.dart';
 import 'CoffeeMachineScreen.dart';
-import 'Account.dart';
 
 class Dashboard extends StatelessWidget {
   @override
@@ -275,11 +276,127 @@ class Dashboard extends StatelessWidget {
                         ),
                         child: GestureDetector(
                           onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => Account()),
-                            );
+                            showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                      title: const Text('Account Information',
+                                          textAlign: TextAlign.center,
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.bold)),
+                                      backgroundColor: Color(0xFF01204E),
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(20)),
+                                      content: Container(
+                                          width: 300,
+                                          height: 150,
+                                          child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                // Username
+                                                Text(
+                                                  'Username',
+                                                  style: TextStyle(
+                                                      fontSize: 16,
+                                                      color: Colors.white),
+                                                ),
+                                                Container(
+                                                  width: 194,
+                                                  height: 26,
+                                                  child: TextFormField(
+                                                    readOnly: true,
+                                                    decoration: InputDecoration(
+                                                      hintStyle:
+                                                          const TextStyle(
+                                                              color: Colors
+                                                                  .white70),
+                                                      filled: true,
+                                                      fillColor: Colors.white24,
+                                                      border:
+                                                          OutlineInputBorder(
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(8.0),
+                                                        borderSide:
+                                                            BorderSide.none,
+                                                      ),
+                                                    ),
+                                                    style: TextStyle(
+                                                        color: Colors.white),
+                                                  ),
+                                                ),
+
+                                                // Email
+                                                Text(
+                                                  'Email',
+                                                  style: TextStyle(
+                                                      fontSize: 16,
+                                                      color: Colors.white),
+                                                ),
+                                                Container(
+                                                  width: 194,
+                                                  height: 26,
+                                                  child: TextFormField(
+                                                    readOnly: true,
+                                                    decoration: InputDecoration(
+                                                      hintStyle:
+                                                          const TextStyle(
+                                                              color: Colors
+                                                                  .white70),
+                                                      filled: true,
+                                                      fillColor: Colors.white24,
+                                                      border:
+                                                          OutlineInputBorder(
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(8.0),
+                                                        borderSide:
+                                                            BorderSide.none,
+                                                      ),
+                                                    ),
+                                                    style: TextStyle(
+                                                        color: Colors.white),
+                                                  ),
+                                                ),
+
+                                                // Password
+                                                Text(
+                                                  'Password',
+                                                  style: TextStyle(
+                                                      fontSize: 16,
+                                                      color: Colors.white),
+                                                ),
+                                                Container(
+                                                  width: 194,
+                                                  height: 26,
+                                                  child: TextFormField(
+                                                    readOnly: true,
+                                                    obscureText: true,
+                                                    decoration: InputDecoration(
+                                                      hintStyle:
+                                                          const TextStyle(
+                                                              color: Colors
+                                                                  .white70),
+                                                      filled: true,
+                                                      fillColor: Colors.white24,
+                                                      border:
+                                                          OutlineInputBorder(
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(8.0),
+                                                        borderSide:
+                                                            BorderSide.none,
+                                                      ),
+                                                    ),
+                                                    style: TextStyle(
+                                                        color: Colors.white),
+                                                  ),
+                                                ),
+                                              ])));
+                                });
                           },
 
                           // "Account Text"
