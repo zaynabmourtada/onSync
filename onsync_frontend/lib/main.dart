@@ -2,14 +2,20 @@ import 'package:flutter/material.dart';
 import 'registration.dart';
 import 'Login.dart';
 import 'confirmation_message.dart';
-import 'error_message.dart'; // Import the login.dart file
+import 'error_message.dart'; // Ensure you import the necessary files
+import 'api_service.dart';
+import 'dashboard.dart';
 
 void main() {
-  runApp(const MyApp());
+  final apiService = ApiService('http://10.0.2.2:5000');
+
+  runApp(MyApp(apiService: apiService));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  final ApiService apiService;
+
+  const MyApp({super.key, required this.apiService});
 
   @override
   Widget build(BuildContext context) {
@@ -26,18 +32,21 @@ class MyApp extends StatelessWidget {
       ),
       initialRoute: '/registration',
       routes: {
-        '/': (context) => const MyHomePage(title: 'Flutter Demo Home Page'),
-        '/registration': (context) => const RegistrationPage(),
-        '/login': (context) => LoginScreen(),
+        '/': (context) =>
+            MyHomePage(title: 'Flutter Demo Home Page', apiService: apiService),
+        '/registration': (context) => RegistrationPage(apiService: apiService),
+        '/login': (context) => LoginScreen(apiService: apiService),
+        '/dashboard': (context) => Dashboard(apiService: apiService),
       },
     );
   }
 }
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
   final String title;
+  final ApiService apiService;
+
+  const MyHomePage({super.key, required this.title, required this.apiService});
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
@@ -58,7 +67,7 @@ class _MyHomePageState extends State<MyHomePage> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          backgroundColor: Color(0xFF0A0E21),
+          backgroundColor: const Color(0xFF0A0E21),
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
           content: isValid ? ConfirmationMessage() : ErrorMessage(),
@@ -86,17 +95,17 @@ class _MyHomePageState extends State<MyHomePage> {
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () => Navigator.pushNamed(context, '/registration'),
-              child: Text('Register'),
+              child: const Text('Register'),
             ),
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () => Navigator.pushNamed(context, '/login'),
-              child: Text('Login'),
+              child: const Text('Login'),
             ),
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: _showDialog,
-              child: Text('Show Dialog'),
+              child: const Text('Show Dialog'),
             ),
           ],
         ),

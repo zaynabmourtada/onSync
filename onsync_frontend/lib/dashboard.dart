@@ -1,11 +1,13 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
-import 'package:onsync_app/Login.dart';
-import 'Settings.dart';
-import 'CoffeeMachineScreen.dart';
+import 'api_service.dart';
+import 'settings.dart';
+import 'coffeemachinescreen.dart'; // Ensure this is correctly imported
 
 class Dashboard extends StatelessWidget {
+  final ApiService apiService;
+
+  const Dashboard({super.key, required this.apiService});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -13,7 +15,7 @@ class Dashboard extends StatelessWidget {
       body: Column(
         children: [
           ClipRRect(
-            borderRadius: BorderRadius.vertical(
+            borderRadius: const BorderRadius.vertical(
               bottom: Radius.circular(35.0),
             ),
             child: Container(
@@ -29,20 +31,16 @@ class Dashboard extends StatelessWidget {
                     Container(
                       width: 48,
                       height: 40,
-                      child: Icon(
+                      child: const Icon(
                         Icons.arrow_back,
                         color: Colors.brown,
                         size: 40,
                       ),
                     ),
-
-                    // 'Hi, user' Text
-                    SizedBox(
-                      height: 16.0,
-                    ),
+                    const SizedBox(height: 16.0),
                     Padding(
                       padding: const EdgeInsets.only(top: 25.0),
-                      child: Text(
+                      child: const Text(
                         'Hi, user',
                         style: TextStyle(
                           color: Colors.white,
@@ -51,16 +49,13 @@ class Dashboard extends StatelessWidget {
                         ),
                       ),
                     ),
-                    Spacer(),
-
-                    // Notification icon
+                    const Spacer(),
                     Padding(
                       padding: const EdgeInsets.only(right: 25.0),
-                      child: Container(
+                      child: SizedBox(
                         width: 37,
                         height: 37,
-                        alignment: Alignment.centerRight,
-                        child: Icon(
+                        child: const Icon(
                           Icons.notifications_active_outlined,
                           color: Colors.brown,
                           size: 40,
@@ -72,7 +67,6 @@ class Dashboard extends StatelessWidget {
               ),
             ),
           ),
-
           Center(
             child: Align(
               alignment: Alignment.centerLeft,
@@ -87,28 +81,85 @@ class Dashboard extends StatelessWidget {
                       width: 130,
                       height: 170,
                       child: Container(
-                        padding: EdgeInsets.all(8.0),
+                        padding: const EdgeInsets.all(8.0),
                         decoration: BoxDecoration(
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(25.0),
-                          border:
-                              Border.all(color: Color(0xFFC19A6B), width: 5),
+                          border: Border.all(
+                              color: const Color(0xFFC19A6B), width: 5),
                         ),
                         child: GestureDetector(
                           onTap: () {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => CoffeeMachineScreen()),
+                                builder: (context) =>
+                                    CoffeeMachineScreen(apiService: apiService),
+                              ),
                             );
                           },
-
                           // "Coffee Machine" Text
-                          child: Stack(children: [
+                          child: Stack(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(top: 70.0),
+                                child: const Text(
+                                  "Coffee Machine",
+                                  style: TextStyle(
+                                    color: Color(0xFF2A9FD1),
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                ),
+                              ),
+                              // Coffee machine icon
+                              Container(
+                                width: 75,
+                                height: 69,
+                                alignment: Alignment.centerRight,
+                                child: ShaderMask(
+                                  shaderCallback: (bounds) =>
+                                      const LinearGradient(
+                                    begin: Alignment.centerLeft,
+                                    end: Alignment.centerRight,
+                                    colors: [
+                                      Color.fromRGBO(0, 81, 227, 1),
+                                      Color.fromRGBO(10, 223, 244, 1),
+                                    ],
+                                  ).createShader(bounds),
+                                  child: const Icon(
+                                    Icons.coffee_outlined,
+                                    color: Colors.white,
+                                    size: 50,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                    // SPRINKLER SYSTEM
+                    const SizedBox(width: 20),
+                    SizedBox(
+                      width: 130,
+                      height: 170,
+                      child: Container(
+                        padding: const EdgeInsets.all(8.0),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(25.0),
+                          border: Border.all(
+                              color: const Color(0xFFC19A6B), width: 5),
+                        ),
+                        // "Sprinkler System" Text
+                        child: Stack(
+                          children: [
                             Padding(
                               padding: const EdgeInsets.only(top: 70.0),
-                              child: Text(
-                                "Coffee Machine",
+                              child: const Text(
+                                "Sprinkler System",
                                 style: TextStyle(
                                   color: Color(0xFF2A9FD1),
                                   fontSize: 15,
@@ -117,14 +168,14 @@ class Dashboard extends StatelessWidget {
                                 textAlign: TextAlign.center,
                               ),
                             ),
-
-                            // Coffee machine icon
+                            // Sprinkler System icon
                             Container(
                               width: 75,
                               height: 69,
                               alignment: Alignment.centerRight,
                               child: ShaderMask(
-                                shaderCallback: (bounds) => LinearGradient(
+                                shaderCallback: (bounds) =>
+                                    const LinearGradient(
                                   begin: Alignment.centerLeft,
                                   end: Alignment.centerRight,
                                   colors: [
@@ -132,310 +183,228 @@ class Dashboard extends StatelessWidget {
                                     Color.fromRGBO(10, 223, 244, 1),
                                   ],
                                 ).createShader(bounds),
-                                child: Icon(
-                                  Icons.coffee_outlined,
+                                child: const Icon(
+                                  Icons.water_drop_rounded,
                                   color: Colors.white,
                                   size: 50,
                                 ),
                               ),
                             ),
-                          ]),
+                          ],
                         ),
                       ),
                     ),
-
-                    // SPRINKLER SYSTEM
-                    SizedBox(width: 20),
-                    SizedBox(
-                      width: 130,
-                      height: 170,
-                      child: Container(
-                        padding: EdgeInsets.all(8.0),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(25.0),
-                          border:
-                              Border.all(color: Color(0xFFC19A6B), width: 5),
-                        ),
-
-                        // "Sprinkler System" Text
-                        child: Stack(children: [
-                          Padding(
-                            padding: const EdgeInsets.only(top: 70.0),
-                            child: Text(
-                              "Sprinkler System",
-                              style: TextStyle(
-                                color: Color(0xFF2A9FD1),
-                                fontSize: 15,
-                                fontWeight: FontWeight.bold,
-                              ),
-                              textAlign: TextAlign.center,
-                            ),
-                          ),
-
-                          // Sprinkler System icon
-                          Container(
-                            width: 75,
-                            height: 69,
-                            alignment: Alignment.centerRight,
-                            child: ShaderMask(
-                              shaderCallback: (bounds) => LinearGradient(
-                                begin: Alignment.centerLeft,
-                                end: Alignment.centerRight,
-                                colors: [
-                                  Color.fromRGBO(0, 81, 227, 1),
-                                  Color.fromRGBO(10, 223, 244, 1),
-                                ],
-                              ).createShader(bounds),
-                              child: Icon(
-                                Icons.water_drop_rounded,
-                                color: Colors.white,
-                                size: 50,
-                              ),
-                            ),
-                          ),
-                        ]),
-                      ),
-                    ),
-
                     // SETTINGS
-                    SizedBox(width: 20),
+                    const SizedBox(width: 20),
                     SizedBox(
                       width: 130,
                       height: 170,
                       child: Container(
-                        padding: EdgeInsets.all(8.0),
+                        padding: const EdgeInsets.all(8.0),
                         decoration: BoxDecoration(
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(25.0),
-                          border:
-                              Border.all(color: Color(0xFFC19A6B), width: 5),
+                          border: Border.all(
+                              color: const Color(0xFFC19A6B), width: 5),
                         ),
                         child: GestureDetector(
                           onTap: () {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => Settings()),
+                                builder: (context) => Settings(),
+                              ),
                             );
                           },
-
-                          // "Settings Text"
-                          child: Stack(children: [
-                            Padding(
-                              padding:
-                                  const EdgeInsets.only(top: 85.0, left: 22.5),
-                              child: Text(
-                                "Settings",
-                                style: TextStyle(
-                                  color: Color(0xFF2A9FD1),
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                                textAlign: TextAlign.center,
-                              ),
-                            ),
-
-                            // Settings icon
-                            Positioned(
-                              top: 25,
-                              right: 28,
-                              child: ShaderMask(
-                                shaderCallback: (bounds) => LinearGradient(
-                                  begin: Alignment.centerLeft,
-                                  end: Alignment.centerRight,
-                                  colors: [
-                                    Color.fromRGBO(0, 81, 227, 1),
-                                    Color.fromRGBO(10, 223, 244, 1),
-                                  ],
-                                ).createShader(bounds),
-                                child: Icon(
-                                  Icons.settings_rounded,
-                                  color: Colors.white,
-                                  size: 50,
+                          child: Stack(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                    top: 85.0, left: 22.5),
+                                child: const Text(
+                                  "Settings",
+                                  style: TextStyle(
+                                    color: Color(0xFF2A9FD1),
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                  textAlign: TextAlign.center,
                                 ),
                               ),
-                            ),
-                          ]),
+                              Positioned(
+                                top: 25,
+                                right: 28,
+                                child: ShaderMask(
+                                  shaderCallback: (bounds) => LinearGradient(
+                                    begin: Alignment.centerLeft,
+                                    end: Alignment.centerRight,
+                                    colors: [
+                                      const Color.fromRGBO(0, 81, 227, 1),
+                                      const Color.fromRGBO(10, 223, 244, 1),
+                                    ],
+                                  ).createShader(bounds),
+                                  child: const Icon(
+                                    Icons.settings_rounded,
+                                    color: Colors.white,
+                                    size: 50,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ),
-
                     // ACCOUNT
-                    SizedBox(width: 20),
+                    const SizedBox(width: 20),
                     SizedBox(
                       width: 130,
                       height: 170,
                       child: Container(
-                        padding: EdgeInsets.all(8.0),
+                        padding: const EdgeInsets.all(8.0),
                         decoration: BoxDecoration(
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(25.0),
-                          border:
-                              Border.all(color: Color(0xFFC19A6B), width: 5),
+                          border: Border.all(
+                              color: const Color(0xFFC19A6B), width: 5),
                         ),
                         child: GestureDetector(
                           onTap: () {
                             showDialog(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return AlertDialog(
-                                      title: const Text('Account Information',
-                                          textAlign: TextAlign.center,
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  title: const Text(
+                                    'Account Information',
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  backgroundColor: const Color(0xFF01204E),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(20),
+                                  ),
+                                  content: Container(
+                                    width: 300,
+                                    height: 150,
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        const Text(
+                                          'Username',
                                           style: TextStyle(
-                                              color: Colors.white,
-                                              fontWeight: FontWeight.bold)),
-                                      backgroundColor: Color(0xFF01204E),
-                                      shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(20)),
-                                      content: Container(
-                                          width: 300,
-                                          height: 150,
-                                          child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                // Username
-                                                Text(
-                                                  'Username',
-                                                  style: TextStyle(
-                                                      fontSize: 16,
-                                                      color: Colors.white),
-                                                ),
-                                                Container(
-                                                  width: 194,
-                                                  height: 26,
-                                                  child: TextFormField(
-                                                    readOnly: true,
-                                                    decoration: InputDecoration(
-                                                      hintStyle:
-                                                          const TextStyle(
-                                                              color: Colors
-                                                                  .white70),
-                                                      filled: true,
-                                                      fillColor: Colors.white24,
-                                                      border:
-                                                          OutlineInputBorder(
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(8.0),
-                                                        borderSide:
-                                                            BorderSide.none,
-                                                      ),
-                                                    ),
-                                                    style: TextStyle(
-                                                        color: Colors.white),
-                                                  ),
-                                                ),
-
-                                                // Email
-                                                Text(
-                                                  'Email',
-                                                  style: TextStyle(
-                                                      fontSize: 16,
-                                                      color: Colors.white),
-                                                ),
-                                                Container(
-                                                  width: 194,
-                                                  height: 26,
-                                                  child: TextFormField(
-                                                    readOnly: true,
-                                                    decoration: InputDecoration(
-                                                      hintStyle:
-                                                          const TextStyle(
-                                                              color: Colors
-                                                                  .white70),
-                                                      filled: true,
-                                                      fillColor: Colors.white24,
-                                                      border:
-                                                          OutlineInputBorder(
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(8.0),
-                                                        borderSide:
-                                                            BorderSide.none,
-                                                      ),
-                                                    ),
-                                                    style: TextStyle(
-                                                        color: Colors.white),
-                                                  ),
-                                                ),
-
-                                                // Password
-                                                Text(
-                                                  'Password',
-                                                  style: TextStyle(
-                                                      fontSize: 16,
-                                                      color: Colors.white),
-                                                ),
-                                                Container(
-                                                  width: 194,
-                                                  height: 26,
-                                                  child: TextFormField(
-                                                    readOnly: true,
-                                                    obscureText: true,
-                                                    decoration: InputDecoration(
-                                                      hintStyle:
-                                                          const TextStyle(
-                                                              color: Colors
-                                                                  .white70),
-                                                      filled: true,
-                                                      fillColor: Colors.white24,
-                                                      border:
-                                                          OutlineInputBorder(
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(8.0),
-                                                        borderSide:
-                                                            BorderSide.none,
-                                                      ),
-                                                    ),
-                                                    style: TextStyle(
-                                                        color: Colors.white),
-                                                  ),
-                                                ),
-                                              ])));
-                                });
-                          },
-
-                          // "Account Text"
-                          child: Stack(children: [
-                            Padding(
-                              padding:
-                                  const EdgeInsets.only(top: 85.0, left: 22.5),
-                              child: Text(
-                                "Account",
-                                style: TextStyle(
-                                  color: Color(0xFF2A9FD1),
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                                textAlign: TextAlign.center,
-                              ),
-                            ),
-
-                            // Account icon
-                            Positioned(
-                              top: 25,
-                              right: 25,
-                              child: ShaderMask(
-                                shaderCallback: (bounds) => LinearGradient(
-                                  begin: Alignment.centerLeft,
-                                  end: Alignment.centerRight,
-                                  colors: [
-                                    Color.fromRGBO(0, 81, 227, 1),
-                                    Color.fromRGBO(10, 223, 244, 1),
+                                            fontSize: 16,
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                        SizedBox(
+                                          width: 194,
+                                          height: 26,
+                                          child: TextFormField(
+                                            readOnly: true,
+                                            decoration: const InputDecoration(
+                                              hintStyle: TextStyle(
+                                                  color: Colors.white70),
+                                              filled: true,
+                                              fillColor: Colors.white24,
+                                              border: OutlineInputBorder(
+                                                borderRadius: BorderRadius.all(
+                                                    Radius.circular(8.0)),
+                                                borderSide: BorderSide.none,
+                                              ),
+                                            ),
+                                            style: const TextStyle(
+                                                color: Colors.white),
+                                          ),
+                                        ),
+                                        const SizedBox(height: 20),
+                                        const Text(
+                                          'Password',
+                                          style: TextStyle(
+                                            fontSize: 16,
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                        SizedBox(
+                                          width: 194,
+                                          height: 26,
+                                          child: TextFormField(
+                                            readOnly: true,
+                                            decoration: const InputDecoration(
+                                              hintStyle: TextStyle(
+                                                  color: Colors.white70),
+                                              filled: true,
+                                              fillColor: Colors.white24,
+                                              border: OutlineInputBorder(
+                                                borderRadius: BorderRadius.all(
+                                                    Radius.circular(8.0)),
+                                                borderSide: BorderSide.none,
+                                              ),
+                                            ),
+                                            style: const TextStyle(
+                                                color: Colors.white),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  actions: [
+                                    TextButton(
+                                      child: const Text(
+                                        'Close',
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                      },
+                                    ),
                                   ],
-                                ).createShader(bounds),
-                                child: Icon(
-                                  Icons.account_circle_rounded,
-                                  color: Colors.white,
-                                  size: 50,
+                                );
+                              },
+                            );
+                          },
+                          child: Stack(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                    top: 85.0, left: 22.5),
+                                child: const Text(
+                                  "Account",
+                                  style: TextStyle(
+                                    color: Color(0xFF2A9FD1),
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                  textAlign: TextAlign.center,
                                 ),
                               ),
-                            ),
-                          ]),
+                              Positioned(
+                                top: 25,
+                                right: 28,
+                                child: ShaderMask(
+                                  shaderCallback: (bounds) => LinearGradient(
+                                    begin: Alignment.centerLeft,
+                                    end: Alignment.centerRight,
+                                    colors: [
+                                      const Color.fromRGBO(0, 81, 227, 1),
+                                      const Color.fromRGBO(10, 223, 244, 1),
+                                    ],
+                                  ).createShader(bounds),
+                                  child: const Icon(
+                                    Icons.account_circle_rounded,
+                                    color: Colors.white,
+                                    size: 50,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ),
@@ -444,98 +413,42 @@ class Dashboard extends StatelessWidget {
               ),
             ),
           ),
-
-          // LOGOUT
-          Spacer(),
-          Padding(
-            padding: const EdgeInsets.only(left: 200, bottom: 25),
-            child: GestureDetector(
-              onTap: () {
-                showDialog(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return AlertDialog(
-                      backgroundColor: Color(0xFF01204E),
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20)),
-                      content: Container(
-                        width: 300,
-                        height: 150,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              'Are you sure you want to logout?',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                fontSize: 18,
-                                color: Colors.white,
-                              ),
-                            ),
-                            SizedBox(height: 20),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                ElevatedButton(
-                                  onPressed: () {
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                LoginScreen()));
-                                  },
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: Color(0xFFC19A6B),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(12),
-                                    ),
-                                  ),
-                                  child: Text(
-                                    'Logout',
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.normal,
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                                ),
-                                SizedBox(width: 10),
-                                OutlinedButton(
-                                  onPressed: () {
-                                    Navigator.of(context).pop();
-                                  },
-                                  style: OutlinedButton.styleFrom(
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(12),
-                                    ),
-                                  ),
-                                  child: Text(
-                                    'Cancel',
-                                    style: TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.normal,
-                                        color: Color(0xFFCDCDCD)),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                    );
-                  },
-                );
-              },
-              child: Text(
-                'Logout',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 20,
-                ),
-              ),
-            ),
-          ),
         ],
+      ),
+      bottomNavigationBar: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+        decoration: const BoxDecoration(
+          color: Color(0xFFC19A6B),
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(25.0),
+            topRight: Radius.circular(25.0),
+          ),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            IconButton(
+              icon: const Icon(Icons.home),
+              color: Colors.white,
+              onPressed: () {},
+            ),
+            IconButton(
+              icon: const Icon(Icons.notifications),
+              color: Colors.white,
+              onPressed: () {},
+            ),
+            IconButton(
+              icon: const Icon(Icons.settings),
+              color: Colors.white,
+              onPressed: () {},
+            ),
+            IconButton(
+              icon: const Icon(Icons.account_circle),
+              color: Colors.white,
+              onPressed: () {},
+            ),
+          ],
+        ),
       ),
     );
   }
