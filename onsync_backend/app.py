@@ -2,6 +2,7 @@ from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
 from datetime import datetime
+import socket
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
@@ -62,6 +63,14 @@ def login():
     print("Invalid credentials")  # Debug print
     return jsonify({"status": "error", "message": "Invalid credentials"}), 401
 
+# Initialize schedules and relay state
+schedules = []
+relay_state = {
+    'status': 'OFF',
+    'last_command': None,
+    'last_brew_time': None
+}
+
 # Set schedule endpoint
 @app.route('/set_schedule', methods=['POST'])
 def set_schedule():
@@ -98,4 +107,5 @@ def get_status():
     return jsonify(relay_state), 200
 
 if __name__ == '__main__':
+    # Run the app on all available IP addresses (accessible within the network)
     app.run(host='0.0.0.0', port=5000)

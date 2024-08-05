@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:onsync_app/Login.dart';
 import 'api_service.dart';
 import 'dashboard.dart';
+import 'Login.dart';
 
 class RegistrationPage extends StatefulWidget {
-  const RegistrationPage({super.key});
+  final ApiService apiService;
+
+  const RegistrationPage({super.key, required this.apiService});
 
   @override
   _RegistrationPageState createState() => _RegistrationPageState();
@@ -14,8 +16,8 @@ class _RegistrationPageState extends State<RegistrationPage> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _confirmPasswordController = TextEditingController();
-  final ApiService apiService = ApiService('http://192.168.1.43:5000'); // Update with your backend URL
+  final TextEditingController _confirmPasswordController =
+      TextEditingController();
 
   void _register() async {
     final email = _emailController.text;
@@ -30,36 +32,26 @@ class _RegistrationPageState extends State<RegistrationPage> {
       return;
     }
 
-    // Temporarily bypass the API call to test navigation
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => Dashboard()),
-    );
-
-    
-    final response = await apiService.register(email, username, password);
-
-    // Log the response for debugging
-    print('Response status: ${response.statusCode}');
-    print('Response body: ${response.body}');
+    final response =
+        await widget.apiService.register(email, username, password);
 
     if (response.statusCode == 200) {
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => Dashboard()),
+        MaterialPageRoute(
+            builder: (context) => Dashboard(apiService: widget.apiService)),
       );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Failed to register: ${response.body}')),
       );
     }
-   
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF01204E), // Dark blue background color
+      backgroundColor: const Color(0xFF01204E),
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
@@ -87,11 +79,15 @@ class _RegistrationPageState extends State<RegistrationPage> {
               const SizedBox(height: 16),
               _buildTextField('Enter new username', _usernameController),
               const SizedBox(height: 16),
-              _buildTextField('Enter new password', _passwordController, obscureText: true),
+              _buildTextField('Enter new password', _passwordController,
+                  obscureText: true),
               const SizedBox(height: 16),
-              _buildTextField('Re-enter new password', _confirmPasswordController, obscureText: true),
+              _buildTextField(
+                  'Re-enter new password', _confirmPasswordController,
+                  obscureText: true),
               const SizedBox(height: 24),
-              _buildButton('Create Account', const Color(0xFFC19A6B), _register),
+              _buildButton(
+                  'Create Account', const Color(0xFFC19A6B), _register),
               const SizedBox(height: 16),
               const Text(
                 'Already have an account?',
@@ -104,7 +100,9 @@ class _RegistrationPageState extends State<RegistrationPage> {
               _buildButton('Login', const Color(0xFFC19A6B), () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => LoginScreen()),
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          LoginScreen(apiService: widget.apiService)),
                 );
               }),
             ],
@@ -114,8 +112,8 @@ class _RegistrationPageState extends State<RegistrationPage> {
     );
   }
 
-  // Helper method to build text fields
-  Widget _buildTextField(String hintText, TextEditingController controller, {bool obscureText = false}) {
+  Widget _buildTextField(String hintText, TextEditingController controller,
+      {bool obscureText = false}) {
     return TextField(
       controller: controller,
       obscureText: obscureText,
@@ -133,7 +131,6 @@ class _RegistrationPageState extends State<RegistrationPage> {
     );
   }
 
-  // Helper method to build buttons
   Widget _buildButton(String text, Color color, VoidCallback onPressed) {
     return ElevatedButton(
       onPressed: onPressed,
@@ -146,14 +143,8 @@ class _RegistrationPageState extends State<RegistrationPage> {
       ),
       child: Text(
         text,
-        style: const TextStyle(fontSize: 16, color: Colors.white), // Set text color to white
+        style: const TextStyle(fontSize: 16, color: Colors.white),
       ),
     );
   }
-}
-
-void main() {
-  runApp(const MaterialApp(
-    home: RegistrationPage(),
-  ));
 }
