@@ -22,8 +22,7 @@ class Dashboard extends StatelessWidget {
               height: 291.0,
               color: const Color(0xFFC19A6B),
               child: Padding(
-                padding: const EdgeInsets.symmetric(
-                    horizontal: 16.0, vertical: 32.0),
+                padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 32.0),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -453,3 +452,40 @@ class Dashboard extends StatelessWidget {
     );
   }
 }
+
+void main() {
+  runApp(MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: HomePage(),
+    );
+  }
+}
+
+class HomePage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Home Page'),
+      ),
+      body: Center(
+        child: ElevatedButton(
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => Settings()),
+            );
+          },
+          child: Text('Go to Settings'),
+        ),
+      ),
+    );
+  }
+}
+
+
