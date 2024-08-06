@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'api_service.dart';
 import 'settings.dart';
-import 'coffeemachinescreen.dart'; // Ensure this is correctly imported
+import 'coffeemachinescreen.dart';
+import 'Login.dart';
 
 class Dashboard extends StatelessWidget {
   final ApiService apiService;
@@ -37,7 +38,9 @@ class Dashboard extends StatelessWidget {
                         size: 40,
                       ),
                     ),
-                    const SizedBox(height: 16.0),
+                    const SizedBox(width: 16.0),
+
+                    // 'Hi, user' Text
                     Padding(
                       padding: const EdgeInsets.only(top: 25.0),
                       child: const Text(
@@ -231,6 +234,7 @@ class Dashboard extends StatelessWidget {
                                   textAlign: TextAlign.center,
                                 ),
                               ),
+                              // Settings icon
                               Positioned(
                                 top: 25,
                                 right: 28,
@@ -256,119 +260,148 @@ class Dashboard extends StatelessWidget {
                       ),
                     ),
                     // ACCOUNT
-                    const SizedBox(width: 20),
+                    SizedBox(width: 20),
                     SizedBox(
                       width: 130,
                       height: 170,
                       child: Container(
-                        padding: const EdgeInsets.all(8.0),
+                        padding: EdgeInsets.all(8.0),
                         decoration: BoxDecoration(
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(25.0),
-                          border: Border.all(
-                              color: const Color(0xFFC19A6B), width: 5),
+                          border:
+                              Border.all(color: Color(0xFFC19A6B), width: 5),
                         ),
                         child: GestureDetector(
                           onTap: () {
+                           // Navigator.push(
+                            //  context,
+                             // MaterialPageRoute(
+                               //   builder: (context) => Account()),
+                          //  );
                             showDialog(
-                              context: context,
-                              builder: (BuildContext context) {
-                                return AlertDialog(
-                                  title: const Text(
-                                    'Account Information',
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                  backgroundColor: const Color(0xFF01204E),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(20),
-                                  ),
-                                  content: Container(
-                                    width: 300,
-                                    height: 150,
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        const Text(
-                                          'Username',
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                      title: const Text('Account Information',
+                                          textAlign: TextAlign.center,
                                           style: TextStyle(
-                                            fontSize: 16,
-                                            color: Colors.white,
-                                          ),
-                                        ),
-                                        SizedBox(
-                                          width: 194,
-                                          height: 26,
-                                          child: TextFormField(
-                                            readOnly: true,
-                                            decoration: const InputDecoration(
-                                              hintStyle: TextStyle(
-                                                  color: Colors.white70),
-                                              filled: true,
-                                              fillColor: Colors.white24,
-                                              border: OutlineInputBorder(
-                                                borderRadius: BorderRadius.all(
-                                                    Radius.circular(8.0)),
-                                                borderSide: BorderSide.none,
-                                              ),
-                                            ),
-                                            style: const TextStyle(
-                                                color: Colors.white),
-                                          ),
-                                        ),
-                                        const SizedBox(height: 20),
-                                        const Text(
-                                          'Password',
-                                          style: TextStyle(
-                                            fontSize: 16,
-                                            color: Colors.white,
-                                          ),
-                                        ),
-                                        SizedBox(
-                                          width: 194,
-                                          height: 26,
-                                          child: TextFormField(
-                                            readOnly: true,
-                                            decoration: const InputDecoration(
-                                              hintStyle: TextStyle(
-                                                  color: Colors.white70),
-                                              filled: true,
-                                              fillColor: Colors.white24,
-                                              border: OutlineInputBorder(
-                                                borderRadius: BorderRadius.all(
-                                                    Radius.circular(8.0)),
-                                                borderSide: BorderSide.none,
-                                              ),
-                                            ),
-                                            style: const TextStyle(
-                                                color: Colors.white),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  actions: [
-                                    TextButton(
-                                      child: const Text(
-                                        'Close',
-                                        style: TextStyle(
-                                          fontSize: 16,
-                                          color: Colors.white,
-                                        ),
-                                      ),
-                                      onPressed: () {
-                                        Navigator.of(context).pop();
-                                      },
-                                    ),
-                                  ],
-                                );
-                              },
-                            );
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.bold)),
+                                      backgroundColor: Color(0xFF01204E),
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(20)),
+                                      content: Container(
+                                          width: 300,
+                                          height: 150,
+                                          child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                // Username
+                                                Text(
+                                                  'Username',
+                                                  style: TextStyle(
+                                                      fontSize: 16,
+                                                      color: Colors.white),
+                                                ),
+                                                Container(
+                                                  width: 194,
+                                                  height: 26,
+                                                  child: TextFormField(
+                                                    readOnly: true,
+                                                    decoration: InputDecoration(
+                                                      hintStyle:
+                                                          const TextStyle(
+                                                              color: Colors
+                                                                  .white70),
+                                                      filled: true,
+                                                      fillColor: Colors.white24,
+                                                      border:
+                                                          OutlineInputBorder(
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(8.0),
+                                                        borderSide:
+                                                            BorderSide.none,
+                                                      ),
+                                                    ),
+                                                    style: TextStyle(
+                                                        color: Colors.white),
+                                                  ),
+                                                ),
+
+                                                // Email
+                                                Text(
+                                                  'Email',
+                                                  style: TextStyle(
+                                                      fontSize: 16,
+                                                      color: Colors.white),
+                                                ),
+                                                Container(
+                                                  width: 194,
+                                                  height: 26,
+                                                  child: TextFormField(
+                                                    readOnly: true,
+                                                    decoration: InputDecoration(
+                                                      hintStyle:
+                                                          const TextStyle(
+                                                              color: Colors
+                                                                  .white70),
+                                                      filled: true,
+                                                      fillColor: Colors.white24,
+                                                      border:
+                                                          OutlineInputBorder(
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(8.0),
+                                                        borderSide:
+                                                            BorderSide.none,
+                                                      ),
+                                                    ),
+                                                    style: TextStyle(
+                                                        color: Colors.white),
+                                                  ),
+                                                ),
+
+                                                // Password
+                                                Text(
+                                                  'Password',
+                                                  style: TextStyle(
+                                                      fontSize: 16,
+                                                      color: Colors.white),
+                                                ),
+                                                Container(
+                                                  width: 194,
+                                                  height: 26,
+                                                  child: TextFormField(
+                                                    readOnly: true,
+                                                    obscureText: true,
+                                                    decoration: InputDecoration(
+                                                      hintStyle:
+                                                          const TextStyle(
+                                                              color: Colors
+                                                                  .white70),
+                                                      filled: true,
+                                                      fillColor: Colors.white24,
+                                                      border:
+                                                          OutlineInputBorder(
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(8.0),
+                                                        borderSide:
+                                                            BorderSide.none,
+                                                      ),
+                                                    ),
+                                                    style: TextStyle(
+                                                        color: Colors.white),
+                                                  ),
+                                                ),
+                                              ])));
+                                });
                           },
+                          // "Account Text"
                           child: Stack(
                             children: [
                               Padding(
@@ -415,39 +448,39 @@ class Dashboard extends StatelessWidget {
           ),
         ],
       ),
-      bottomNavigationBar: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-        decoration: const BoxDecoration(
-          color: Color(0xFFC19A6B),
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(25.0),
-            topRight: Radius.circular(25.0),
-          ),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            IconButton(
-              icon: const Icon(Icons.home),
-              color: Colors.white,
-              onPressed: () {},
-            ),
-            IconButton(
-              icon: const Icon(Icons.notifications),
-              color: Colors.white,
-              onPressed: () {},
-            ),
-            IconButton(
-              icon: const Icon(Icons.settings),
-              color: Colors.white,
-              onPressed: () {},
-            ),
-            IconButton(
-              icon: const Icon(Icons.account_circle),
-              color: Colors.white,
-              onPressed: () {},
-            ),
-          ],
+    );
+  }
+}
+
+void main() {
+  runApp(MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: HomePage(),
+    );
+  }
+}
+
+class HomePage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Home Page'),
+      ),
+      body: Center(
+        child: ElevatedButton(
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => Settings()),
+            );
+          },
+          child: Text('Go to Settings'),
         ),
       ),
     );
