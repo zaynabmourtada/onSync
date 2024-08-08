@@ -20,25 +20,35 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        primaryColor: const Color(0xFFC19A6B),
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color(0xFFC19A6B),
-          primary: const Color(0xFFC19A6B),
-          secondary: const Color(0xFF01204E),
+        title: 'Flutter Demo',
+        theme: ThemeData(
+          primaryColor: const Color(0xFFC19A6B),
+          colorScheme: ColorScheme.fromSeed(
+            seedColor: const Color(0xFFC19A6B),
+            primary: const Color(0xFFC19A6B),
+            secondary: const Color(0xFF01204E),
+          ),
+          useMaterial3: true,
         ),
-        useMaterial3: true,
-      ),
-      initialRoute: '/registration',
-      routes: {
-        '/': (context) =>
-            MyHomePage(title: 'Flutter Demo Home Page', apiService: apiService),
-        '/registration': (context) => RegistrationPage(apiService: apiService),
-        '/login': (context) => LoginScreen(apiService: apiService),
-        '/dashboard': (context) => Dashboard(apiService: apiService),
-      },
-    );
+        initialRoute: '/registration',
+        routes: {
+          '/': (context) => MyHomePage(
+              title: 'Flutter Demo Home Page', apiService: apiService),
+          '/registration': (context) =>
+              RegistrationPage(apiService: apiService),
+          '/login': (context) => LoginScreen(apiService: apiService),
+        },
+        onGenerateRoute: (settings) {
+          if (settings.name == '/dashboard') {
+            final args = settings.arguments as Map<String, dynamic>;
+            return MaterialPageRoute(
+              builder: (context) => Dashboard(
+                apiService: apiService,
+                userInfo: args['userInfo'],
+              ),
+            );
+          }
+        });
   }
 }
 

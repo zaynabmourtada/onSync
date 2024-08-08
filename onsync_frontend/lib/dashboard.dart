@@ -6,8 +6,9 @@ import 'Login.dart';
 
 class Dashboard extends StatelessWidget {
   final ApiService apiService;
+  final Map<String, dynamic> userInfo;
 
-  const Dashboard({super.key, required this.apiService});
+  const Dashboard({super.key, required this.apiService, required this.userInfo});
 
   @override
   Widget build(BuildContext context) {
@@ -273,8 +274,7 @@ class Dashboard extends StatelessWidget {
                               Border.all(color: Color(0xFFC19A6B), width: 5),
                         ),
                         child: GestureDetector(
-                          onTap: () {
-                           // Navigator.push(
+                          onTap: () {                           // Navigator.push(
                             //  context,
                              // MaterialPageRoute(
                                //   builder: (context) => Account()),
@@ -301,7 +301,7 @@ class Dashboard extends StatelessWidget {
                                               children: [
                                                 // Username
                                                 Text(
-                                                  'Username',
+                                                  'Username:',
                                                   style: TextStyle(
                                                       fontSize: 16,
                                                       color: Colors.white),
@@ -311,39 +311,7 @@ class Dashboard extends StatelessWidget {
                                                   height: 26,
                                                   child: TextFormField(
                                                     readOnly: true,
-                                                    decoration: InputDecoration(
-                                                      hintStyle:
-                                                          const TextStyle(
-                                                              color: Colors
-                                                                  .white70),
-                                                      filled: true,
-                                                      fillColor: Colors.white24,
-                                                      border:
-                                                          OutlineInputBorder(
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(8.0),
-                                                        borderSide:
-                                                            BorderSide.none,
-                                                      ),
-                                                    ),
-                                                    style: TextStyle(
-                                                        color: Colors.white),
-                                                  ),
-                                                ),
-
-                                                // Email
-                                                Text(
-                                                  'Email',
-                                                  style: TextStyle(
-                                                      fontSize: 16,
-                                                      color: Colors.white),
-                                                ),
-                                                Container(
-                                                  width: 194,
-                                                  height: 26,
-                                                  child: TextFormField(
-                                                    readOnly: true,
+                                                    initialValue: userInfo['username'],
                                                     decoration: InputDecoration(
                                                       hintStyle:
                                                           const TextStyle(
@@ -366,8 +334,9 @@ class Dashboard extends StatelessWidget {
                                                 ),
 
                                                 // Password
+                                                SizedBox( height: 10,),
                                                 Text(
-                                                  'Password',
+                                                  'Password:',
                                                   style: TextStyle(
                                                       fontSize: 16,
                                                       color: Colors.white),
@@ -377,6 +346,7 @@ class Dashboard extends StatelessWidget {
                                                   height: 26,
                                                   child: TextFormField(
                                                     readOnly: true,
+                                                    initialValue: userInfo['password'],
                                                     obscureText: true,
                                                     decoration: InputDecoration(
                                                       hintStyle:
@@ -446,42 +416,99 @@ class Dashboard extends StatelessWidget {
               ),
             ),
           ),
+        
+
+// LOGOUT
+          Spacer(),
+          Padding(
+            padding: const EdgeInsets.only(left: 200, bottom: 25),
+            child: GestureDetector(
+              onTap: () {
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      backgroundColor: Color(0xFF01204E),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20)),
+                      content: Container(
+                        width: 300,
+                        height: 150,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              'Are you sure you want to logout?',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontSize: 18,
+                                color: Colors.white,
+                              ),
+                            ),
+                            SizedBox(height: 20),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                ElevatedButton(
+                                  onPressed: () {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                LoginScreen(apiService: apiService,)));
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Color(0xFFC19A6B),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                  ),
+                                  child: Text(
+                                    'Logout',
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.normal,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(width: 10),
+                                OutlinedButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                  style: OutlinedButton.styleFrom(
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                  ),
+                                  child: Text(
+                                    'Cancel',
+                                    style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.normal,
+                                        color: Color(0xFFCDCDCD)),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                );
+              },
+              child: Text(
+                'Logout',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 20,
+                ),
+              ),
+            ),
+          ),
         ],
-      ),
-    );
-  }
-}
-
-void main() {
-  runApp(MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      home: HomePage(),
-    );
-  }
-}
-
-class HomePage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Home Page'),
-      ),
-      body: Center(
-        child: ElevatedButton(
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => Settings()),
-            );
-          },
-          child: Text('Go to Settings'),
-        ),
       ),
     );
   }

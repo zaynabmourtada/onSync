@@ -39,7 +39,15 @@ class _RegistrationPageState extends State<RegistrationPage> {
       Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) => Dashboard(apiService: widget.apiService)),
+          builder: (context) => Dashboard(
+            apiService: widget.apiService,
+            userInfo: {
+              'email': email,
+              'username': username,
+              'password': password,
+            },
+          ),
+        ),
       );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(

@@ -71,18 +71,52 @@ relay_state = {
     'last_brew_time': None
 }
 
+# Schedule Model
+class Schedule(db.Model):
+    id = db.Column(db.Integer, primary_key = True)
+    username = db.Column(db.String(80), nullable = False)
+    start_time = db.Column(db.String(20), nullable = False)
+    end_time = db.Column(db.String(20), nullable = False)
+
+# Create Schedule database
+with app.app_context():
+    db.create_all()
+
 # Set schedule endpoint
 @app.route('/set_schedule', methods=['POST'])
 def set_schedule():
     data = request.get_json()
     print("Received set schedule request with data:", data)  # Debug print
 
-    start_time = datetime.strptime(data['start_time'], '%Y-%m-%dT%H:%M:%S')
-    end_time = datetime.strptime(data['end_time'], '%Y-%m-%dT%H:%M:%S')
-    schedules.append({'start_time': start_time, 'end_time': end_time})
+    username = data ['username']
+    start_time = data['start_time']
+    end_time = data ['end_time']
+    print(f"Username: {username}, Start Time: {start_time}, End Time: {end_time}")  # Debug print
+
+    if not username or not start_time or not end_time:
+        print("Missing data in request")  # Debug print
+        return jsonify({"status": "error", "message": "Missing data"}), 400
+
+    new_scheddule = Schedule(username=username, start_time= start_time, end_time = end_time)
+    db.session.add(new_scheddule)
+    db.session.commit()
     print("Schedule set successfully")  # Debug print
     return jsonify({"status": "success"}), 200
 
+# Get schedule endpoint
+@app.route('/get_schedule', methods = ['GET'])
+def get_schedule():
+    username = request.args.get('username')
+    schedule = Schedule.query.filter_by(username=username).first()
+    if schedule:
+        return jsonify({
+            'username': schedule.username,
+            'start_time': schedule.start_time,
+            'end_time': schedule.end_time
+        }), 200
+    else:
+        return jsonify({'message': 'Schedule not found'}), 404
+    
 # Control coffee machine endpoint
 @app.route('/control_coffee_machine', methods=['POST'])
 def control_coffee_machine():

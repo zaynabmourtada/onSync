@@ -7,8 +7,7 @@ import 'am_pm.dart';
 class CoffeeMachineScreen extends StatefulWidget {
   final ApiService apiService;
 
-  const CoffeeMachineScreen({Key? key, required this.apiService})
-      : super(key: key);
+  const CoffeeMachineScreen({Key? key, required this.apiService}) : super(key: key);
 
   @override
   ScheduleInterface createState() => ScheduleInterface();
@@ -20,10 +19,26 @@ class ScheduleInterface extends State<CoffeeMachineScreen> {
   bool _isAm = true;
 
   // Save scheduled time
-  void _saveSelectedTime() {
-    String selectedTime =
-        '$_selectedHour:$_selectedMinute ${_isAm ? 'AM' : 'PM'}';
-    print('Selected Time: $selectedTime');
+  void _saveSelectedTime() async {
+    String startTime = '$_selectedHour:$_selectedMinute ${_isAm ? 'AM' : 'PM'}';
+    String endTime = 'N/A'; // Assuming you don't have an end time in this example
+
+    // Assuming you have a method to get the current user's username
+    String username = 'current_user'; // Replace with actual username
+
+    print('Saving schedule for $username: $startTime to $endTime');  // Debug print
+
+    final response = await widget.apiService.setSchedule(
+      username,
+      startTime,
+      endTime
+    );
+
+    if (response.statusCode == 200) {
+      print('Schedule saved successfully');
+    } else {
+      print('Failed to save schedule: ${response.body}');
+    }
   }
 
   @override
@@ -62,7 +77,7 @@ class ScheduleInterface extends State<CoffeeMachineScreen> {
                               child: ListWheelScrollView.useDelegate(
                                 onSelectedItemChanged: (index) {
                                   setState(() {
-                                    _selectedHour = index;
+                                    _selectedHour = index + 1; // Adjust for 1-12 range
                                   });
                                 },
                                 itemExtent: 50,
@@ -70,10 +85,10 @@ class ScheduleInterface extends State<CoffeeMachineScreen> {
                                 diameterRatio: 1.2,
                                 physics: FixedExtentScrollPhysics(),
                                 childDelegate: ListWheelChildBuilderDelegate(
-                                  childCount: 13,
+                                  childCount: 12,
                                   builder: (context, index) {
                                     return MyHours(
-                                      hours: index,
+                                      hours: index + 1, // Adjust to display 1-12 hours
                                     );
                                   },
                                 ),
