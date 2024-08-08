@@ -25,7 +25,12 @@ class _LoginScreenState extends State<LoginScreen> {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => Dashboard(apiService: widget.apiService), // Pass the apiService
+          builder: (context) => Dashboard(
+              apiService: widget.apiService,
+              userInfo: {
+                'username': username,
+                'password': password
+              }), // Pass the apiService
         ),
       );
     } else {
@@ -64,7 +69,8 @@ class _LoginScreenState extends State<LoginScreen> {
               const SizedBox(height: 24),
               _buildTextField('Enter your username', _usernameController),
               const SizedBox(height: 16),
-              _buildTextField('Enter your password', _passwordController, obscureText: true),
+              _buildTextField('Enter your password', _passwordController,
+                  obscureText: true),
               const SizedBox(height: 24),
               _buildButton('Login', const Color(0xFFC19A6B), () {
                 _login(context);
@@ -82,7 +88,9 @@ class _LoginScreenState extends State<LoginScreen> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => RegistrationPage(apiService: widget.apiService), // Ensure RegistrationPage is defined and imported
+                    builder: (context) => RegistrationPage(
+                        apiService: widget
+                            .apiService), // Ensure RegistrationPage is defined and imported
                   ),
                 );
               }),
@@ -94,7 +102,8 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   // Helper method to build text fields
-  Widget _buildTextField(String hintText, TextEditingController controller, {bool obscureText = false}) {
+  Widget _buildTextField(String hintText, TextEditingController controller,
+      {bool obscureText = false}) {
     return TextField(
       controller: controller,
       obscureText: obscureText,

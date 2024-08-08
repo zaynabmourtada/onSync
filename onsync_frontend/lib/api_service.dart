@@ -7,6 +7,7 @@ class ApiService {
 
   ApiService(this.baseUrl);
 
+  // Handle register API call
   Future<http.Response> register(
       String email, String username, String password) async {
     final url = Uri.parse('$baseUrl/register');
@@ -23,6 +24,7 @@ class ApiService {
     return response;
   }
 
+  // Handle login API call
   Future<http.Response> login(String username, String password) async {
     final url = Uri.parse('$baseUrl/login');
     final response = await http.post(
@@ -37,12 +39,14 @@ class ApiService {
     return response;
   }
 
-  Future<http.Response> setSchedule(String startTime, String endTime) async {
+  // Handle Schedule Interface API call
+  Future<http.Response> setSchedule(String username,String startTime, String endTime) async {
     final url = Uri.parse('$baseUrl/set_schedule');
     final response = await http.post(
       url,
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({
+        'username': username,
         'start_time': startTime,
         'end_time': endTime,
       }),
@@ -51,6 +55,19 @@ class ApiService {
     return response;
   }
 
+   Future<Map<String, dynamic>> getSchedule(String username) async {
+    final url = Uri.parse('$baseUrl/get_schedule?username=$username');
+    final response = await http.get(url);
+
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body);
+    } else {
+      throw Exception('Failed to fetch schedule');
+    }
+  }
+
+
+  // Handle control API call
   Future<http.Response> controlCoffeeMachine(String command) async {
     final url = Uri.parse('$baseUrl/control_coffee_machine');
     final response = await http.post(
@@ -62,6 +79,7 @@ class ApiService {
     return response;
   }
 
+  // Handle status API call
   Future<Map<String, dynamic>> getStatus() async {
     final url = Uri.parse('$baseUrl/get_status');
     final response = await http.get(url);
@@ -72,4 +90,17 @@ class ApiService {
       throw Exception('Failed to get status');
     }
   }
-}
+
+  // Handle Account Information API call
+  Future<Map<String, dynamic>> getAccountInfo() async{
+    final url = Uri.parse('$baseUrl/account');
+    final response = await http.get(url);
+    if (response.statusCode == 200) {
+      return json.decode(response.body);
+    } else {
+      throw Exception('Failed to load account info');
+    }
+    }
+
+  }
+
