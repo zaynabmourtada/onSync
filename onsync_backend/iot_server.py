@@ -1,26 +1,10 @@
 import socket
-import ssl
-import datetime
 import threading
 
 # Host, port, and buffer size variables
-SERVER_HOST = "127.0.0.1"
+SERVER_HOST = "0.0.0.0"
 SERVER_PORT = 8000
 BUFFER_SIZE = 1024
-
-# Create SSL context
-context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
-
-# Load server certificate and private key
-context.load_cert_chain(certfile=r"C:\Users\zayna\Projects\onSync\onsync_backend\server-cert.pem", keyfile=r"C:\Users\zayna\Projects\onSync\onsync_backend\server-key.pem")
-
-# Create and bind TCP socket
-server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-server_socket.bind((SERVER_HOST, SERVER_PORT))
-
-# Put server in listening mode
-server_socket.listen(5)
-server_socket = context.wrap_socket(server_socket, server_side=True)
 
 # Command handling
 is_on = False
@@ -57,18 +41,19 @@ def handle_client(client_socket):
     try:
         # Receive data
         data = client_socket.recv(BUFFER_SIZE).decode('utf-8').strip()
-        print(f"Command received: {data}")
+        print(f"Command received: '{data}'")
 
+        # Handle commands
         response = ""
-        if data == "BREW":
+        if data == "1":
             start_brewing()
             response = "BREWING\n"
-        elif data == "STOP":
+        elif data == "2":
             stop_brewing()
             response = "OFF\n"
-        elif data == "STATUS":
+        elif data == "3":
             response = get_status() + "\n"
-        elif data.startswith("SET DATE AND TIME"):
+        elif data.startswith("4"):
             try:
                 _, date_time = data.split(" ", 1)
                 set_date_and_time(date_time)
@@ -97,5 +82,17 @@ def accept_clients():
         except Exception as e:
             print(f"Error accepting client: {e}")
 
-# Start accepting clients
-accept_clients()
+if __name__ == "__main__":
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as server_socket:
+        server_socket.bind((SERVER_HOST, SERVER_PORT))
+        server_socket.listen()
+        print(f"Server running on {SERVER_HOST}:{SERVER_PORT}")
+        
+        try:
+            threading.Thread(target=accept_clients, daemon=True).start()
+            while True:
+                pass
+        except KeyboardInterrupt:
+            print("Server shutting down...")
+        finally:
+            server_socket.close()

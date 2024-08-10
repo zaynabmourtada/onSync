@@ -10,11 +10,13 @@ class _CoffeeControlPageState extends State<CoffeeControlPage> {
   final ApiService apiService = ApiService('http://192.168.1.100:5000');
   final TextEditingController _startTimeController = TextEditingController();
   final TextEditingController _endTimeController = TextEditingController();
+  final TextEditingController _usernameController =
+      TextEditingController(); // Add username controller
   String _status = "OFF";
 
   Future<void> _setSchedule() async {
-    await apiService.setSchedule(
-        _startTimeController.text, _endTimeController.text);
+    await apiService.setSchedule(_startTimeController.text,
+        _endTimeController.text, _usernameController.text); // Pass the username
   }
 
   Future<void> _sendCommand(String command) async {
@@ -46,6 +48,10 @@ class _CoffeeControlPageState extends State<CoffeeControlPage> {
               controller: _endTimeController,
               decoration:
                   InputDecoration(labelText: 'End Time (YYYY-MM-DDTHH:MM:SS)'),
+            ),
+            TextField(
+              controller: _usernameController, // Add input for username
+              decoration: InputDecoration(labelText: 'Username'),
             ),
             SizedBox(height: 20),
             ElevatedButton(
