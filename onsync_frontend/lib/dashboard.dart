@@ -1,14 +1,70 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'api_service.dart';
 import 'settings.dart';
 import 'coffeemachinescreen.dart';
 import 'Login.dart';
 
-class Dashboard extends StatelessWidget {
+class Dashboard extends StatefulWidget {
   final ApiService apiService;
   final Map<String, dynamic> userInfo;
 
   const Dashboard({super.key, required this.apiService, required this.userInfo});
+
+  @override
+  _DashboardState createState() => _DashboardState();
+}
+
+class _DashboardState extends State<Dashboard> {
+  bool _allowAllNotifications = false;
+  bool _notifyWhenProcessing = false;
+  bool _notifyWhenReady = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadPreferences();
+  }
+
+  // Function to load saved preferences
+  void _loadPreferences() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _allowAllNotifications = prefs.getBool('allowAllNotifications') ?? false;
+      _notifyWhenProcessing = prefs.getBool('notifyWhenProcessing') ?? false;
+      _notifyWhenReady = prefs.getBool('notifyWhenReady') ?? false;
+    });
+  }
+
+  // Function to save preferences
+  void _savePreferences() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('allowAllNotifications', _allowAllNotifications);
+    await prefs.setBool('notifyWhenProcessing', _notifyWhenProcessing);
+    await prefs.setBool('notifyWhenReady', _notifyWhenReady);
+  }
+
+  // Function to show the notification preferences dialog
+  void _showNotificationPreferences(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return NotificationPreferencesDialog(
+          allowAllNotifications: _allowAllNotifications,
+          notifyWhenProcessing: _notifyWhenProcessing,
+          notifyWhenReady: _notifyWhenReady,
+          onSave: (preferences) {
+            setState(() {
+              _allowAllNotifications = preferences['allowAllNotifications']!;
+              _notifyWhenProcessing = preferences['notifyWhenProcessing']!;
+              _notifyWhenReady = preferences['notifyWhenReady']!;
+            });
+            _savePreferences(); // Save the preferences after updating the state
+          },
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -24,29 +80,27 @@ class Dashboard extends StatelessWidget {
               height: 291.0,
               color: const Color(0xFFC19A6B),
               child: Padding(
-                padding: const EdgeInsets.symmetric(
-                    horizontal: 16.0, vertical: 32.0),
+                padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 32.0),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     // Back arrow icon
-                    Container(
+                    const SizedBox(
                       width: 48,
                       height: 40,
-                      child: const Icon(
+                      child: Icon(
                         Icons.arrow_back,
                         color: Colors.brown,
                         size: 40,
                       ),
                     ),
                     const SizedBox(width: 16.0),
-
                     // 'Hi, user' Text
                     Padding(
                       padding: const EdgeInsets.only(top: 25.0),
-                      child: const Text(
-                        'Hi, user',
-                        style: TextStyle(
+                      child: Text(
+                        'Hi, ${widget.userInfo['username']}',
+                        style: const TextStyle(
                           color: Colors.white,
                           fontSize: 35,
                           fontWeight: FontWeight.bold,
@@ -59,10 +113,15 @@ class Dashboard extends StatelessWidget {
                       child: SizedBox(
                         width: 37,
                         height: 37,
-                        child: const Icon(
-                          Icons.notifications_active_outlined,
-                          color: Colors.brown,
-                          size: 40,
+                        child: IconButton(
+                          icon: const Icon(
+                            Icons.notifications_active_outlined,
+                            color: Colors.brown,
+                            size: 40,
+                          ),
+                          onPressed: () {
+                            _showNotificationPreferences(context);
+                          },
                         ),
                       ),
                     ),
@@ -89,25 +148,23 @@ class Dashboard extends StatelessWidget {
                         decoration: BoxDecoration(
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(25.0),
-                          border: Border.all(
-                              color: const Color(0xFFC19A6B), width: 5),
+                          border: Border.all(color: const Color(0xFFC19A6B), width: 5),
                         ),
                         child: GestureDetector(
                           onTap: () {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) =>
-                                    CoffeeMachineScreen(apiService: apiService),
+                                builder: (context) => CoffeeMachineScreen(apiService: widget.apiService),
                               ),
                             );
                           },
                           // "Coffee Machine" Text
                           child: Stack(
                             children: [
-                              Padding(
-                                padding: const EdgeInsets.only(top: 70.0),
-                                child: const Text(
+                              const Padding(
+                                padding: EdgeInsets.only(top: 70.0),
+                                child: Text(
                                   "Coffee Machine",
                                   style: TextStyle(
                                     color: Color(0xFF2A9FD1),
@@ -123,8 +180,7 @@ class Dashboard extends StatelessWidget {
                                 height: 69,
                                 alignment: Alignment.centerRight,
                                 child: ShaderMask(
-                                  shaderCallback: (bounds) =>
-                                      const LinearGradient(
+                                  shaderCallback: (bounds) => const LinearGradient(
                                     begin: Alignment.centerLeft,
                                     end: Alignment.centerRight,
                                     colors: [
@@ -154,15 +210,14 @@ class Dashboard extends StatelessWidget {
                         decoration: BoxDecoration(
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(25.0),
-                          border: Border.all(
-                              color: const Color(0xFFC19A6B), width: 5),
+                          border: Border.all(color: const Color(0xFFC19A6B), width: 5),
                         ),
                         // "Sprinkler System" Text
                         child: Stack(
                           children: [
-                            Padding(
-                              padding: const EdgeInsets.only(top: 70.0),
-                              child: const Text(
+                            const Padding(
+                              padding: EdgeInsets.only(top: 70.0),
+                              child: Text(
                                 "Sprinkler System",
                                 style: TextStyle(
                                   color: Color(0xFF2A9FD1),
@@ -178,8 +233,7 @@ class Dashboard extends StatelessWidget {
                               height: 69,
                               alignment: Alignment.centerRight,
                               child: ShaderMask(
-                                shaderCallback: (bounds) =>
-                                    const LinearGradient(
+                                shaderCallback: (bounds) => const LinearGradient(
                                   begin: Alignment.centerLeft,
                                   end: Alignment.centerRight,
                                   colors: [
@@ -208,24 +262,17 @@ class Dashboard extends StatelessWidget {
                         decoration: BoxDecoration(
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(25.0),
-                          border: Border.all(
-                              color: const Color(0xFFC19A6B), width: 5),
+                          border: Border.all(color: const Color(0xFFC19A6B), width: 5),
                         ),
                         child: GestureDetector(
                           onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => Settings(),
-                              ),
-                            );
+                            _showNotificationPreferences(context);
                           },
                           child: Stack(
                             children: [
-                              Padding(
-                                padding: const EdgeInsets.only(
-                                    top: 85.0, left: 22.5),
-                                child: const Text(
+                              const Padding(
+                                padding: EdgeInsets.only(top: 85.0, left: 22.5),
+                                child: Text(
                                   "Settings",
                                   style: TextStyle(
                                     color: Color(0xFF2A9FD1),
@@ -240,12 +287,12 @@ class Dashboard extends StatelessWidget {
                                 top: 25,
                                 right: 28,
                                 child: ShaderMask(
-                                  shaderCallback: (bounds) => LinearGradient(
+                                  shaderCallback: (bounds) => const LinearGradient(
                                     begin: Alignment.centerLeft,
                                     end: Alignment.centerRight,
                                     colors: [
-                                      const Color.fromRGBO(0, 81, 227, 1),
-                                      const Color.fromRGBO(10, 223, 244, 1),
+                                      Color.fromRGBO(0, 81, 227, 1),
+                                      Color.fromRGBO(10, 223, 244, 1),
                                     ],
                                   ).createShader(bounds),
                                   child: const Icon(
@@ -261,24 +308,19 @@ class Dashboard extends StatelessWidget {
                       ),
                     ),
                     // ACCOUNT
-                    SizedBox(width: 20),
+                    const SizedBox(width: 20),
                     SizedBox(
                       width: 130,
                       height: 170,
                       child: Container(
-                        padding: EdgeInsets.all(8.0),
+                        padding: const EdgeInsets.all(8.0),
                         decoration: BoxDecoration(
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(25.0),
-                          border:
-                              Border.all(color: Color(0xFFC19A6B), width: 5),
+                          border: Border.all(color: const Color(0xFFC19A6B), width: 5),
                         ),
                         child: GestureDetector(
-                          onTap: () {                           // Navigator.push(
-                            //  context,
-                             // MaterialPageRoute(
-                               //   builder: (context) => Account()),
-                          //  );
+                          onTap: () {
                             showDialog(
                                 context: context,
                                 builder: (BuildContext context) {
@@ -288,84 +330,61 @@ class Dashboard extends StatelessWidget {
                                           style: TextStyle(
                                               color: Colors.white,
                                               fontWeight: FontWeight.bold)),
-                                      backgroundColor: Color(0xFF01204E),
+                                      backgroundColor: const Color(0xFF01204E),
                                       shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(20)),
+                                          borderRadius: BorderRadius.circular(20)),
                                       content: Container(
                                           width: 300,
                                           height: 150,
                                           child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
+                                              crossAxisAlignment: CrossAxisAlignment.start,
                                               children: [
                                                 // Username
-                                                Text(
+                                                const Text(
                                                   'Username:',
-                                                  style: TextStyle(
-                                                      fontSize: 16,
-                                                      color: Colors.white),
+                                                  style: TextStyle(fontSize: 16, color: Colors.white),
                                                 ),
-                                                Container(
+                                                SizedBox(
                                                   width: 194,
                                                   height: 26,
                                                   child: TextFormField(
                                                     readOnly: true,
-                                                    initialValue: userInfo['username'],
+                                                    initialValue: widget.userInfo['username'],
                                                     decoration: InputDecoration(
-                                                      hintStyle:
-                                                          const TextStyle(
-                                                              color: Colors
-                                                                  .white70),
+                                                      hintStyle: const TextStyle(color: Colors.white70),
                                                       filled: true,
                                                       fillColor: Colors.white24,
-                                                      border:
-                                                          OutlineInputBorder(
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(8.0),
-                                                        borderSide:
-                                                            BorderSide.none,
+                                                      border: OutlineInputBorder(
+                                                        borderRadius: BorderRadius.circular(8.0),
+                                                        borderSide: BorderSide.none,
                                                       ),
                                                     ),
-                                                    style: TextStyle(
-                                                        color: Colors.white),
+                                                    style: const TextStyle(color: Colors.white),
                                                   ),
                                                 ),
-
+                                                const SizedBox(height: 10),
                                                 // Password
-                                                SizedBox( height: 10,),
-                                                Text(
+                                                const Text(
                                                   'Password:',
-                                                  style: TextStyle(
-                                                      fontSize: 16,
-                                                      color: Colors.white),
+                                                  style: TextStyle(fontSize: 16, color: Colors.white),
                                                 ),
-                                                Container(
+                                                SizedBox(
                                                   width: 194,
                                                   height: 26,
                                                   child: TextFormField(
                                                     readOnly: true,
-                                                    initialValue: userInfo['password'],
+                                                    initialValue: widget.userInfo['password'],
                                                     obscureText: true,
                                                     decoration: InputDecoration(
-                                                      hintStyle:
-                                                          const TextStyle(
-                                                              color: Colors
-                                                                  .white70),
+                                                      hintStyle: const TextStyle(color: Colors.white70),
                                                       filled: true,
                                                       fillColor: Colors.white24,
-                                                      border:
-                                                          OutlineInputBorder(
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(8.0),
-                                                        borderSide:
-                                                            BorderSide.none,
+                                                      border: OutlineInputBorder(
+                                                        borderRadius: BorderRadius.circular(8.0),
+                                                        borderSide: BorderSide.none,
                                                       ),
                                                     ),
-                                                    style: TextStyle(
-                                                        color: Colors.white),
+                                                    style: const TextStyle(color: Colors.white),
                                                   ),
                                                 ),
                                               ])));
@@ -374,10 +393,9 @@ class Dashboard extends StatelessWidget {
                           // "Account Text"
                           child: Stack(
                             children: [
-                              Padding(
-                                padding: const EdgeInsets.only(
-                                    top: 85.0, left: 22.5),
-                                child: const Text(
+                              const Padding(
+                                padding: EdgeInsets.only(top: 85.0, left: 22.5),
+                                child: Text(
                                   "Account",
                                   style: TextStyle(
                                     color: Color(0xFF2A9FD1),
@@ -391,12 +409,12 @@ class Dashboard extends StatelessWidget {
                                 top: 25,
                                 right: 28,
                                 child: ShaderMask(
-                                  shaderCallback: (bounds) => LinearGradient(
+                                  shaderCallback: (bounds) => const LinearGradient(
                                     begin: Alignment.centerLeft,
                                     end: Alignment.centerRight,
                                     colors: [
-                                      const Color.fromRGBO(0, 81, 227, 1),
-                                      const Color.fromRGBO(10, 223, 244, 1),
+                                      Color.fromRGBO(0, 81, 227, 1),
+                                      Color.fromRGBO(10, 223, 244, 1),
                                     ],
                                   ).createShader(bounds),
                                   child: const Icon(
@@ -416,10 +434,8 @@ class Dashboard extends StatelessWidget {
               ),
             ),
           ),
-        
-
-// LOGOUT
-          Spacer(),
+          // LOGOUT
+          const Spacer(),
           Padding(
             padding: const EdgeInsets.only(left: 200, bottom: 25),
             child: GestureDetector(
@@ -428,16 +444,15 @@ class Dashboard extends StatelessWidget {
                   context: context,
                   builder: (BuildContext context) {
                     return AlertDialog(
-                      backgroundColor: Color(0xFF01204E),
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20)),
+                      backgroundColor: const Color(0xFF01204E),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
                       content: Container(
                         width: 300,
                         height: 150,
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Text(
+                            const Text(
                               'Are you sure you want to logout?',
                               textAlign: TextAlign.center,
                               style: TextStyle(
@@ -445,7 +460,7 @@ class Dashboard extends StatelessWidget {
                                 color: Colors.white,
                               ),
                             ),
-                            SizedBox(height: 20),
+                            const SizedBox(height: 20),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
@@ -454,16 +469,15 @@ class Dashboard extends StatelessWidget {
                                     Navigator.push(
                                         context,
                                         MaterialPageRoute(
-                                            builder: (context) =>
-                                                LoginScreen(apiService: apiService,)));
+                                            builder: (context) => LoginScreen(apiService: widget.apiService,)));
                                   },
                                   style: ElevatedButton.styleFrom(
-                                    backgroundColor: Color(0xFFC19A6B),
+                                    backgroundColor: const Color(0xFFC19A6B),
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(12),
                                     ),
                                   ),
-                                  child: Text(
+                                  child: const Text(
                                     'Logout',
                                     style: TextStyle(
                                       fontSize: 16,
@@ -472,7 +486,7 @@ class Dashboard extends StatelessWidget {
                                     ),
                                   ),
                                 ),
-                                SizedBox(width: 10),
+                                const SizedBox(width: 10),
                                 OutlinedButton(
                                   onPressed: () {
                                     Navigator.of(context).pop();
@@ -482,7 +496,7 @@ class Dashboard extends StatelessWidget {
                                       borderRadius: BorderRadius.circular(12),
                                     ),
                                   ),
-                                  child: Text(
+                                  child: const Text(
                                     'Cancel',
                                     style: TextStyle(
                                         fontSize: 16,
@@ -499,7 +513,7 @@ class Dashboard extends StatelessWidget {
                   },
                 );
               },
-              child: Text(
+              child: const Text(
                 'Logout',
                 style: TextStyle(
                   color: Colors.white,
@@ -510,6 +524,112 @@ class Dashboard extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+class NotificationPreferencesDialog extends StatefulWidget {
+  final bool allowAllNotifications;
+  final bool notifyWhenProcessing;
+  final bool notifyWhenReady;
+  final Function(Map<String, bool>) onSave;
+
+  const NotificationPreferencesDialog({
+    required this.allowAllNotifications,
+    required this.notifyWhenProcessing,
+    required this.notifyWhenReady,
+    required this.onSave,
+  });
+
+  @override
+  _NotificationPreferencesDialogState createState() => _NotificationPreferencesDialogState();
+}
+
+class _NotificationPreferencesDialogState extends State<NotificationPreferencesDialog> {
+  late bool _allowAllNotifications;
+  late bool _notifyWhenProcessing;
+  late bool _notifyWhenReady;
+
+  @override
+  void initState() {
+    super.initState();
+    _allowAllNotifications = widget.allowAllNotifications;
+    _notifyWhenProcessing = widget.notifyWhenProcessing;
+    _notifyWhenReady = widget.notifyWhenReady;
+  }
+
+  Widget _buildSwitchTile(String title, bool value, Function(bool) onChanged) {
+    return SwitchListTile(
+      title: Text(
+        title,
+        style: const TextStyle(color: Colors.white),
+      ),
+      value: value,
+      onChanged: onChanged,
+      activeColor: const Color(0xFFC19A6B),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      backgroundColor: const Color(0xFF0C2340),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(25.0),
+      ),
+      title: const Text(
+        "Notifications",
+        style: TextStyle(
+          color: Colors.white,
+          fontSize: 20,
+          fontWeight: FontWeight.bold,
+        ),
+        textAlign: TextAlign.center,
+      ),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          _buildSwitchTile("Allow All Notifications", _allowAllNotifications, (bool value) {
+            setState(() {
+              _allowAllNotifications = value;
+            });
+          }),
+          _buildSwitchTile("Notify only when machine is processing", _notifyWhenProcessing, (bool value) {
+            setState(() {
+              _notifyWhenProcessing = value;
+            });
+          }),
+          _buildSwitchTile("Notify only when machine is ready", _notifyWhenReady, (bool value) {
+            setState(() {
+              _notifyWhenReady = value;
+            });
+          }),
+        ],
+      ),
+      actions: <Widget>[
+        ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: const Color(0xFFC19A6B),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(18.0),
+            ),
+          ),
+          onPressed: () {
+            widget.onSave({
+              'allowAllNotifications': _allowAllNotifications,
+              'notifyWhenProcessing': _notifyWhenProcessing,
+              'notifyWhenReady': _notifyWhenReady,
+            });
+            Navigator.of(context).pop(); // Close the dialog
+          },
+          child: const Text(
+            "Save Preferences",
+            style: TextStyle(
+              color: Colors.white,
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
