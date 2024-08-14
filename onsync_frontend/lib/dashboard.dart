@@ -19,11 +19,13 @@ class _DashboardState extends State<Dashboard> {
   bool _allowAllNotifications = false;
   bool _notifyWhenProcessing = false;
   bool _notifyWhenReady = false;
+  String _status = "OFF";
 
   @override
   void initState() {
     super.initState();
     _loadPreferences();
+    _getStatus();
   }
 
   // Function to load saved preferences
@@ -42,6 +44,18 @@ class _DashboardState extends State<Dashboard> {
     await prefs.setBool('allowAllNotifications', _allowAllNotifications);
     await prefs.setBool('notifyWhenProcessing', _notifyWhenProcessing);
     await prefs.setBool('notifyWhenReady', _notifyWhenReady);
+  }
+
+  // Function to get coffee machine status
+  Future<void> _getStatus() async {
+    try {
+      final status = await widget.apiService.getStatus();
+      setState(() {
+        _status = status['status'];
+      });
+    } catch (e) {
+      print('Error fetching status: $e');
+    }
   }
 
   // Function to show the notification preferences dialog
@@ -81,35 +95,75 @@ class _DashboardState extends State<Dashboard> {
               color: const Color(0xFFC19A6B),
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 32.0),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                child: Stack(
                   children: [
-                    // Back arrow icon
-                    const SizedBox(
-                      width: 48,
-                      height: 40,
-                      child: Icon(
-                        Icons.arrow_back,
-                        color: Colors.brown,
-                        size: 40,
+                    // Back arrow icon and greeting text
+                    Positioned(
+                      top: 0,
+                      left: 0,
+                      child: Row(
+                        children: [
+                          const SizedBox(
+                            width: 48,
+                            height: 40,
+                            child: Icon(
+                              Icons.arrow_back,
+                              color: Colors.brown,
+                              size: 40,
+                            ),
+                          ),
+                          const SizedBox(width: 16.0),
+                          Padding(
+                            padding: const EdgeInsets.only(top: 25.0),
+                            child: Text(
+                              'Hi, ${widget.userInfo['username']}!',
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 35,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                    const SizedBox(width: 16.0),
-                    // 'Hi, user' Text
-                    Padding(
-                      padding: const EdgeInsets.only(top: 25.0),
-                      child: Text(
-                        'Hi, ${widget.userInfo['username']}',
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 35,
-                          fontWeight: FontWeight.bold,
-                        ),
+                    // Hourglass Icon and Schedule Text (directly under the "Hi, user!" text)
+                    Positioned(
+                      top: 75.0, // Adjust the top position as needed
+                      left: 45.0,
+                      child: Row(
+                        children: [
+                          IconButton(
+                            icon: const Icon(
+                              Icons.hourglass_bottom,
+                              color: Colors.brown,
+                              size: 40,
+                            ),
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => CoffeeMachineScreen(apiService: widget.apiService),
+                                ),
+                              );
+                            },
+                          ),
+                          const SizedBox(width: 0), // Space between icon and text
+                          const Text(
+                            "Set Schedule Now",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                    const Spacer(),
-                    Padding(
-                      padding: const EdgeInsets.only(right: 25.0),
+                    // Notifications Icon (upper right)
+                    Positioned(
+                      top: 15.0,
+                      right: 57.0,
                       child: SizedBox(
                         width: 37,
                         height: 37,
@@ -123,6 +177,34 @@ class _DashboardState extends State<Dashboard> {
                             _showNotificationPreferences(context);
                           },
                         ),
+                      ),
+                    ),
+                    // Power Button Icon or Coffee Brewing (bottom right)
+                    Positioned(
+                      bottom: 0,
+                      right: 22.0,
+                      child: FutureBuilder<void>(
+                        future: _getStatus(),
+                        builder: (context, snapshot) {
+                          return IconButton(
+                            icon: Icon(
+                              _status == 'ON'
+                                  ? Icons.power_settings_new
+                                  : _status == 'BREWING'
+                                      ? Icons.coffee
+                                      : Icons.power_settings_new,
+                              color: _status == 'ON'
+                                  ? const Color.fromARGB(255, 23, 92, 25)
+                                  : _status == 'BREWING'
+                                      ? const Color.fromARGB(255, 45, 23, 16) // if brewing
+                                      : Colors.red,
+                              size: 80, // Increase the size of the icon
+                            ),
+                            onPressed: () {
+                              // Add functionality if needed, or keep it as an indicator only
+                            },
+                          );
+                        },
                       ),
                     ),
                   ],
@@ -148,14 +230,16 @@ class _DashboardState extends State<Dashboard> {
                         decoration: BoxDecoration(
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(25.0),
-                          border: Border.all(color: const Color(0xFFC19A6B), width: 5),
+                          border: Border.all(
+                              color: const Color(0xFFC19A6B), width: 5),
                         ),
                         child: GestureDetector(
                           onTap: () {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => CoffeeMachineScreen(apiService: widget.apiService),
+                                builder: (context) => CoffeeMachineScreen(
+                                    apiService: widget.apiService),
                               ),
                             );
                           },
@@ -180,7 +264,8 @@ class _DashboardState extends State<Dashboard> {
                                 height: 69,
                                 alignment: Alignment.centerRight,
                                 child: ShaderMask(
-                                  shaderCallback: (bounds) => const LinearGradient(
+                                  shaderCallback: (bounds) =>
+                                      const LinearGradient(
                                     begin: Alignment.centerLeft,
                                     end: Alignment.centerRight,
                                     colors: [
@@ -210,7 +295,8 @@ class _DashboardState extends State<Dashboard> {
                         decoration: BoxDecoration(
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(25.0),
-                          border: Border.all(color: const Color(0xFFC19A6B), width: 5),
+                          border: Border.all(
+                              color: const Color(0xFFC19A6B), width: 5),
                         ),
                         // "Sprinkler System" Text
                         child: Stack(
@@ -233,7 +319,8 @@ class _DashboardState extends State<Dashboard> {
                               height: 69,
                               alignment: Alignment.centerRight,
                               child: ShaderMask(
-                                shaderCallback: (bounds) => const LinearGradient(
+                                shaderCallback: (bounds) =>
+                                    const LinearGradient(
                                   begin: Alignment.centerLeft,
                                   end: Alignment.centerRight,
                                   colors: [
@@ -262,7 +349,8 @@ class _DashboardState extends State<Dashboard> {
                         decoration: BoxDecoration(
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(25.0),
-                          border: Border.all(color: const Color(0xFFC19A6B), width: 5),
+                          border: Border.all(
+                              color: const Color(0xFFC19A6B), width: 5),
                         ),
                         child: GestureDetector(
                           onTap: () {
@@ -287,7 +375,8 @@ class _DashboardState extends State<Dashboard> {
                                 top: 25,
                                 right: 28,
                                 child: ShaderMask(
-                                  shaderCallback: (bounds) => const LinearGradient(
+                                  shaderCallback: (bounds) =>
+                                      const LinearGradient(
                                     begin: Alignment.centerLeft,
                                     end: Alignment.centerRight,
                                     colors: [
@@ -317,7 +406,8 @@ class _DashboardState extends State<Dashboard> {
                         decoration: BoxDecoration(
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(25.0),
-                          border: Border.all(color: const Color(0xFFC19A6B), width: 5),
+                          border: Border.all(
+                              color: const Color(0xFFC19A6B), width: 5),
                         ),
                         child: GestureDetector(
                           onTap: () {
@@ -332,59 +422,83 @@ class _DashboardState extends State<Dashboard> {
                                               fontWeight: FontWeight.bold)),
                                       backgroundColor: const Color(0xFF01204E),
                                       shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(20)),
+                                          borderRadius:
+                                              BorderRadius.circular(20)),
                                       content: Container(
                                           width: 300,
                                           height: 150,
                                           child: Column(
-                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
                                               children: [
                                                 // Username
                                                 const Text(
                                                   'Username:',
-                                                  style: TextStyle(fontSize: 16, color: Colors.white),
+                                                  style: TextStyle(
+                                                      fontSize: 16,
+                                                      color: Colors.white),
                                                 ),
                                                 SizedBox(
                                                   width: 194,
                                                   height: 26,
                                                   child: TextFormField(
                                                     readOnly: true,
-                                                    initialValue: widget.userInfo['username'],
+                                                    initialValue: widget
+                                                        .userInfo['username'],
                                                     decoration: InputDecoration(
-                                                      hintStyle: const TextStyle(color: Colors.white70),
+                                                      hintStyle:
+                                                          const TextStyle(
+                                                              color: Colors
+                                                                  .white70),
                                                       filled: true,
                                                       fillColor: Colors.white24,
-                                                      border: OutlineInputBorder(
-                                                        borderRadius: BorderRadius.circular(8.0),
-                                                        borderSide: BorderSide.none,
+                                                      border:
+                                                          OutlineInputBorder(
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(8.0),
+                                                        borderSide:
+                                                            BorderSide.none,
                                                       ),
                                                     ),
-                                                    style: const TextStyle(color: Colors.white),
+                                                    style: const TextStyle(
+                                                        color: Colors.white),
                                                   ),
                                                 ),
                                                 const SizedBox(height: 10),
                                                 // Password
                                                 const Text(
                                                   'Password:',
-                                                  style: TextStyle(fontSize: 16, color: Colors.white),
+                                                  style: TextStyle(
+                                                      fontSize: 16,
+                                                      color: Colors.white),
                                                 ),
                                                 SizedBox(
                                                   width: 194,
                                                   height: 26,
                                                   child: TextFormField(
                                                     readOnly: true,
-                                                    initialValue: widget.userInfo['password'],
+                                                    initialValue: widget
+                                                        .userInfo['password'],
                                                     obscureText: true,
                                                     decoration: InputDecoration(
-                                                      hintStyle: const TextStyle(color: Colors.white70),
+                                                      hintStyle:
+                                                          const TextStyle(
+                                                              color: Colors
+                                                                  .white70),
                                                       filled: true,
                                                       fillColor: Colors.white24,
-                                                      border: OutlineInputBorder(
-                                                        borderRadius: BorderRadius.circular(8.0),
-                                                        borderSide: BorderSide.none,
+                                                      border:
+                                                          OutlineInputBorder(
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(8.0),
+                                                        borderSide:
+                                                            BorderSide.none,
                                                       ),
                                                     ),
-                                                    style: const TextStyle(color: Colors.white),
+                                                    style: const TextStyle(
+                                                        color: Colors.white),
                                                   ),
                                                 ),
                                               ])));
@@ -409,7 +523,8 @@ class _DashboardState extends State<Dashboard> {
                                 top: 25,
                                 right: 28,
                                 child: ShaderMask(
-                                  shaderCallback: (bounds) => const LinearGradient(
+                                  shaderCallback: (bounds) =>
+                                      const LinearGradient(
                                     begin: Alignment.centerLeft,
                                     end: Alignment.centerRight,
                                     colors: [
@@ -445,7 +560,8 @@ class _DashboardState extends State<Dashboard> {
                   builder: (BuildContext context) {
                     return AlertDialog(
                       backgroundColor: const Color(0xFF01204E),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20)),
                       content: Container(
                         width: 300,
                         height: 150,
@@ -469,7 +585,9 @@ class _DashboardState extends State<Dashboard> {
                                     Navigator.push(
                                         context,
                                         MaterialPageRoute(
-                                            builder: (context) => LoginScreen(apiService: widget.apiService,)));
+                                            builder: (context) => LoginScreen(
+                                                  apiService: widget.apiService,
+                                                )));
                                   },
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: const Color(0xFFC19A6B),
@@ -522,11 +640,12 @@ class _DashboardState extends State<Dashboard> {
               ),
             ),
           ),
-        ],
-      ),
-    );
+        ],  // Closing bracket for Column's children
+      ),  // Closing parenthesis for the Column widget
+    );  // Semicolon to terminate the return statement of Scaffold
   }
 }
+
 
 class NotificationPreferencesDialog extends StatefulWidget {
   final bool allowAllNotifications;
@@ -542,10 +661,12 @@ class NotificationPreferencesDialog extends StatefulWidget {
   });
 
   @override
-  _NotificationPreferencesDialogState createState() => _NotificationPreferencesDialogState();
+  _NotificationPreferencesDialogState createState() =>
+      _NotificationPreferencesDialogState();
 }
 
-class _NotificationPreferencesDialogState extends State<NotificationPreferencesDialog> {
+class _NotificationPreferencesDialogState
+    extends State<NotificationPreferencesDialog> {
   late bool _allowAllNotifications;
   late bool _notifyWhenProcessing;
   late bool _notifyWhenReady;
@@ -589,17 +710,22 @@ class _NotificationPreferencesDialogState extends State<NotificationPreferencesD
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
-          _buildSwitchTile("Allow All Notifications", _allowAllNotifications, (bool value) {
+          _buildSwitchTile("Allow All Notifications", _allowAllNotifications,
+              (bool value) {
             setState(() {
               _allowAllNotifications = value;
             });
           }),
-          _buildSwitchTile("Notify only when machine is processing", _notifyWhenProcessing, (bool value) {
+          _buildSwitchTile(
+              "Notify only when machine is processing", _notifyWhenProcessing,
+              (bool value) {
             setState(() {
               _notifyWhenProcessing = value;
             });
           }),
-          _buildSwitchTile("Notify only when machine is ready", _notifyWhenReady, (bool value) {
+          _buildSwitchTile(
+              "Notify only when machine is ready", _notifyWhenReady,
+              (bool value) {
             setState(() {
               _notifyWhenReady = value;
             });
