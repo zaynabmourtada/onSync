@@ -99,7 +99,6 @@ class ScheduleInterface extends State<CoffeeMachineScreen>
     return Scaffold(
       backgroundColor: const Color(0xFF01204E),
       appBar: AppBar(
-        title: const Text('Home Page', style: TextStyle(color: Colors.white)),
         backgroundColor: const Color(0xFF01204E),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Color.fromARGB(255, 243, 240, 237)),
@@ -166,8 +165,8 @@ class ScheduleInterface extends State<CoffeeMachineScreen>
                 ),
                 Text(
                   _status,
-                  style: const TextStyle(
-                    color: Colors.white,
+                  style: TextStyle(
+                    color: _status == 'ON' ? Color.fromARGB(255, 15, 100, 17) : _status == 'OFF' ? Colors.red : Colors.white,
                     fontSize: 48,
                     fontWeight: FontWeight.bold,
                   ),
