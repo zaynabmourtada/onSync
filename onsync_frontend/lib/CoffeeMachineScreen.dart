@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:logger/logger.dart';
 import 'api_service.dart';
 import 'hours.dart';
 import 'minutes.dart';
 import 'am_pm.dart';
-import 'package:logging/logging.dart';
+
+final logger = Logger();
 
 class CoffeeMachineScreen extends StatefulWidget {
   final ApiService apiService;
@@ -14,13 +16,47 @@ class CoffeeMachineScreen extends StatefulWidget {
   ScheduleInterface createState() => ScheduleInterface();
 }
 
-class ScheduleInterface extends State<CoffeeMachineScreen> {
-  int _selectedHour = 0;  // Changed from final to int
-  int _selectedMinute = 0;  // Changed from final to int
-  bool _isAm = true;  // Changed from final to bool
-  String _status = "OFF"; // Add status tracking
+class ScheduleInterface extends State<CoffeeMachineScreen>
+    with SingleTickerProviderStateMixin {
+  int _selectedHour = 0;
+  int _selectedMinute = 0;
+  bool _isAm = true;
+  String _status = "OFF";
 
-  final _logger = Logger('CoffeeMachineScreen');
+  late AnimationController _controller;
+  late Animation<double> _scaleAnimation;
+  late Animation<double> _steamAnimation;
+  late Animation<double> _steamOpacity;
+
+  @override
+  void initState() {
+    super.initState();
+    _getStatus();
+
+    // Initialize the AnimationController and Animations
+    _controller = AnimationController(
+      duration: const Duration(seconds: 2),
+      vsync: this,
+    )..repeat(reverse: true);
+
+    _scaleAnimation = Tween<double>(begin: 1.0, end: 1.2).animate(
+      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
+    );
+
+    _steamAnimation = Tween<double>(begin: 0.0, end: -70.0).animate(
+      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
+    );
+
+    _steamOpacity = Tween<double>(begin: 1.0, end: 0.0).animate(
+      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
+    );
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
 
   // Save scheduled time
   void _saveSelectedTime() async {
@@ -30,19 +66,19 @@ class ScheduleInterface extends State<CoffeeMachineScreen> {
 
     String username = 'current_user'; // Replace with actual username
 
-    _logger.info('Saving schedule for $username: $startTime to $endTime'); // Replaced print with logger
+    logger.i('Saving schedule for $username: $startTime to $endTime');
 
     try {
       final response =
           await widget.apiService.setSchedule(username, startTime, endTime);
 
       if (response.statusCode == 200) {
-        _logger.info('Schedule saved successfully');
+        logger.i('Schedule saved successfully');
       } else {
-        _logger.warning('Failed to save schedule: ${response.body}');
+        logger.e('Failed to save schedule: ${response.body}');
       }
     } catch (e) {
-      _logger.severe('Error saving schedule: $e');
+      logger.e('Error saving schedule: $e');
     }
   }
 
@@ -54,52 +90,43 @@ class ScheduleInterface extends State<CoffeeMachineScreen> {
         _status = status['status'];
       });
     } catch (e) {
-      _logger.severe('Error fetching status: $e');
+      logger.e('Error fetching status: $e');
     }
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _getStatus(); // Fetch status when the screen loads
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF01204E), // Dark blue outer layer background
+      backgroundColor: const Color(0xFF01204E),
       appBar: AppBar(
-        title: const Text(
-          'Home Page',
-          style: TextStyle(color: Colors.white), // Set the title text to white
-        ),
-        backgroundColor: const Color(0xFF01204E), // Match app bar color to the outer background
+        title: const Text('Home Page', style: TextStyle(color: Colors.white)),
+        backgroundColor: const Color(0xFF01204E),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white), // Back arrow in beige
+          icon: const Icon(Icons.arrow_back, color: Color.fromARGB(255, 243, 240, 237)),
           onPressed: () {
-            Navigator.pop(context); // Navigate back to the previous screen
+            Navigator.pop(context);
           },
         ),
         actions: [
           PopupMenuButton<int>(
             onSelected: (item) => _onSelected(context, item),
-            icon: const Icon(Icons.more_vert, color: Colors.white), // Menu icon in beige
+            icon: const Icon(Icons.more_vert, color: Color.fromARGB(255, 243, 241, 239)),
             itemBuilder: (context) => [
-              PopupMenuItem<int>(
+              const PopupMenuItem<int>(
                 value: 0,
                 child: Row(
-                  children: const [
+                  children: [
                     Icon(Icons.hourglass_full_rounded, color: Color(0xFFC19A6B)),
                     SizedBox(width: 10),
                     Text('Set Schedule'),
                   ],
                 ),
               ),
-              PopupMenuItem<int>(
+              const PopupMenuItem<int>(
                 value: 1,
                 child: Row(
-                  children: const [
-                    Icon(Icons.refresh, color:  Color(0xFFC19A6B)),
+                  children: [
+                    Icon(Icons.refresh, color: Color(0xFFC19A6B)),
                     SizedBox(width: 10),
                     Text('Refresh Status'),
                   ],
@@ -111,11 +138,11 @@ class ScheduleInterface extends State<CoffeeMachineScreen> {
       ),
       body: Center(
         child: Container(
-          width: MediaQuery.of(context).size.width * 0.85, // Width of the inner layer
-          height: MediaQuery.of(context).size.height * 0.85, // Height of the inner layer
+          width: MediaQuery.of(context).size.width * 0.85,
+          height: MediaQuery.of(context).size.height * 0.85,
           decoration: BoxDecoration(
-            color: const Color(0xFFC19A6B), // Beige inner layer
-            borderRadius: BorderRadius.circular(20), // Rounded corners
+            color: const Color(0xFFC19A6B),
+            borderRadius: BorderRadius.circular(20),
           ),
           child: Center(
             child: Column(
@@ -138,7 +165,7 @@ class ScheduleInterface extends State<CoffeeMachineScreen> {
                   ),
                 ),
                 Text(
-                  _status == 'ON' ? 'ON' : 'OFF', // Display the state based on the machine's status
+                  _status,
                   style: const TextStyle(
                     color: Colors.white,
                     fontSize: 48,
@@ -147,7 +174,51 @@ class ScheduleInterface extends State<CoffeeMachineScreen> {
                 ),
                 if (_status == 'ON') ...[
                   const SizedBox(height: 20),
-                  const Icon(Icons.coffee_maker, color: Colors.white, size: 100), // Example icon when 'ON'
+                  const Icon(Icons.coffee_maker, color: Colors.brown, size: 100),
+                ] else if (_status == 'BREWING') ...[
+                  const SizedBox(height: 20),
+                  AnimatedBuilder(
+                    animation: _controller,
+                    builder: (context, child) {
+                      return Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          // Steam icons
+                          Transform.translate(
+                            offset: Offset(0, _steamAnimation.value),
+                            child: Opacity(
+                              opacity: _steamOpacity.value,
+                              child: const Icon(Icons.grain, color: Colors.white, size: 30),
+                            ),
+                          ),
+                          Transform.translate(
+                            offset: Offset(-20, _steamAnimation.value),
+                            child: Opacity(
+                              opacity: _steamOpacity.value,
+                              child: const Icon(Icons.grain, color: Colors.white, size: 20),
+                            ),
+                          ),
+                          Transform.translate(
+                            offset: Offset(20, _steamAnimation.value),
+                            child: Opacity(
+                              opacity: _steamOpacity.value,
+                              child: const Icon(Icons.grain, color: Colors.white, size: 25),
+                            ),
+                          ),
+                          // Coffee cup icon with padding above it
+                          Column(
+                            children: [
+                              const SizedBox(height: 40), // Adjust this value to lower the cup as needed
+                              Transform.scale(
+                                scale: _scaleAnimation.value,
+                                child: const Icon(Icons.local_cafe, color: Colors.brown, size: 100),
+                              ),
+                            ],
+                          ),
+                        ],
+                      );
+                    },
+                  ),
                 ],
               ],
             ),
@@ -174,7 +245,7 @@ class ScheduleInterface extends State<CoffeeMachineScreen> {
       builder: (BuildContext context) {
         return AlertDialog(
           backgroundColor: const Color(0xFF01204E),
-          content: Container(
+          content: SizedBox(
             height: 287,
             width: 430,
             child: Column(
@@ -191,7 +262,7 @@ class ScheduleInterface extends State<CoffeeMachineScreen> {
                       child: ListWheelScrollView.useDelegate(
                         onSelectedItemChanged: (index) {
                           setState(() {
-                            _selectedHour = index + 1; // Adjust for 1-12 range
+                            _selectedHour = index + 1; // Corrected
                           });
                         },
                         itemExtent: 50,
@@ -201,9 +272,7 @@ class ScheduleInterface extends State<CoffeeMachineScreen> {
                         childDelegate: ListWheelChildBuilderDelegate(
                           childCount: 12,
                           builder: (context, index) {
-                            return MyHours(
-                              hours: index + 1, // Adjust to display 1-12 hours
-                            );
+                            return MyHours(hours: index + 1);
                           },
                         ),
                       ),
@@ -217,7 +286,7 @@ class ScheduleInterface extends State<CoffeeMachineScreen> {
                       child: ListWheelScrollView.useDelegate(
                         onSelectedItemChanged: (index) {
                           setState(() {
-                            _selectedMinute = index;
+                            _selectedMinute = index; // Corrected
                           });
                         },
                         itemExtent: 50,
@@ -227,9 +296,7 @@ class ScheduleInterface extends State<CoffeeMachineScreen> {
                         childDelegate: ListWheelChildBuilderDelegate(
                           childCount: 60,
                           builder: (context, index) {
-                            return MyMinutes(
-                              mins: index,
-                            );
+                            return MyMinutes(mins: index);
                           },
                         ),
                       ),

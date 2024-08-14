@@ -125,10 +125,15 @@ def control_coffee_machine():
 
     command = data.get('command')
 
-    if command in ['ON', 'OFF']:
+    if command in ['ON', 'OFF', 'BREWING']:
         relay_state['status'] = command
         relay_state['last_command'] = command
-        relay_state['last_brew_time'] = datetime.now().strftime('%Y-%m-%dT%H:%M:%S') if command == 'ON' else None
+        if command == 'ON':
+            relay_state['last_brew_time'] = datetime.now().strftime('%Y-%m-%dT%H:%M:%S')
+        elif command == 'BREWING':
+            relay_state['last_brew_time'] = datetime.now().strftime('%Y-%m-%dT%H:%M:%S')
+        elif command == 'OFF':
+            relay_state['last_brew_time'] = None
         print("Command executed:", command)  # Debug print
         return jsonify({"status": "success", "command": command}), 200
     print("Invalid command")  # Debug print
