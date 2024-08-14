@@ -39,6 +39,7 @@ dependencies:
   scroll_datetime_picker: ^0.1.2
   shared_preferences: ^2.0.15  # Added shared_preferences package
   logging: ^1.0.2
+  logger: ^2.4.0
 
 
 dev_dependencies:
