@@ -1,8 +1,8 @@
-# onSync: IoT Coffee Machine Controller
+# onSync: IoT Coffee Machine Scheduler 
 
 ## Overview
 
-This project involves a mobile application designed to control an IoT-enabled coffee machine. The application features a modern frontend developed with Flutter and a robust Flask backend, utilizing SQLite for database management. The core functionality of the coffee machine is driven by an ESP32 module, programmed in C++ to handle operations like brewing control and status monitoring.
+This project involves a mobile application designed to control an IoT-enabled coffee machine. The application features a modern frontend developed with Flutter and a  Flask backend, utilizing SQLite for database management. The core functionality of the coffee machine is driven by an ESP32 module, programmed in C++ to handle operations like scheduled brewing control and status monitoring.
 
 Security and reliability are ensured with TCP sockets using SSL/TLS protocols to link the backend with the coffee machine, and HTTPS to connect the frontend with the backend.
 
@@ -60,7 +60,7 @@ These instructions will get you a copy of the project up and running on your loc
 
 2. **Launch the Frontend Application**
    
-   Navigate to the frontend directory and run the Flutter application:
+   In another terminal, navigate to the frontend directory and run the Flutter application:
 
    ```bash
    cd onsync_frontend
